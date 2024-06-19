@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Les petits plats - Un site culinaire offrant diverses recettes et conseils de cuisine.">
+    <meta name="keywords" content="cuisine, recettes, nourriture, culinaire, dîner">
+    <meta name="author" content="Gabriele Melendugno">
+    <link href="https://fonts.googleapis.com/css2?family=Anton:wght@400;700&display=swap" rel="stylesheet">
+
+    <title>Les petits plats</title>
+
+    <link href="./dist/output.css" rel="stylesheet">
+    
+</head>
+<body>
+
+  <!-- Hero section -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">CHERCHEZ PARMI PLUS DE 1500 RECETTES<br />
+        DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
+        <div class="search-bar">
+          <form class="hero-form">
+            <div class="input-wrapper">
+              <input type="text" id="mainSearchInput" class="hero-input" placeholder="Rechercher une recette, un ingrédient,..." aria-label="Rechercher une recette, un ingrédient,…">
+              <span class="clear-icon">&times;</span> 
+            </div>
+            <button type="submit" class="hero-button">
+              <img src="assets/search-icon-black.png" alt="Rechercher" class="search-icon">
+            </button>
+          </form>
+        </div>
+    </div>
+  </header>
+
+  <main>
+
+
+
+    <!-- Filter section -->
+    <section class="filters-section">
+
+      <div class="filters">
+
+        <div class="dropdown" id="ingredient-filter">
+          <button class="dropdown-button">Ingrédients</button>
+          <div class="dropdown-content">
+              <input type="text" class="searchInput">
+              <ul class="itemsList"></ul>
+          </div>
+          <div class="filter-chosen"><span></span></div>
+        </div>
+  
+        <div class="dropdown" id="appliance-filter">
+            <button class="dropdown-button">Appareils</button>
+            <div class="dropdown-content">
+                <input type="text" class="searchInput">
+                <ul class="itemsList"></ul>
+            </div>
+            <div class="filter-chosen"><span></span></div>
+        </div>
+    
+        <div class="dropdown
+        " id="utensil-filter">
+            <button class="dropdown-button">Ustensiles</button>
+            <div class="dropdown-content">
+                <input type="text" class="searchInput">
+                <ul class="itemsList"></ul>
+            </div>
+            <div class="filter-chosen"><span></span></div>
+        </div>
+
+      </div>
+
+      <div class="recipes-counter"><span id="recipesCounter"></span> recettes</div>
+    </section>
+
+  <!-- Recipes grid -->
+  <section class="recipes-grid bg-recipes-grid">
+      <!-- Recipe cards -->
+  </section>
+</main>
+    
+  <script type="module" src="src/home.js"></script>
+</body>
+</html>

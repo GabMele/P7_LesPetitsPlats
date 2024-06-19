@@ -1,0 +1,242 @@
+/* styles/main.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+
+/* Custom CSS Variable */
+:root {
+    --recipes-grid-bg-color: lightgray;
+    --highlight-color: #FFD15B;
+    --bg-white: white;
+}
+
+
+/* Body */
+body {
+  @apply bg-gray-100 mx-auto max-w-7xl;
+}
+
+main {
+  @apply px-16 pt-4;
+}
+
+
+/* Hero Section */
+.hero {
+  @apply relative bg-center h-[667px];
+  background-image: url('../assets/hero-background.jpg');
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1000ms forwards;
+}
+
+.hero-content {
+  @apply h-full flex flex-col items-center justify-center;
+  @apply fade-in;
+}
+
+
+.hero-title {
+  @apply text-4xl leading-[3.5rem] mb-3 text-center;
+  font-family: 'Anton', sans-serif;
+  font-weight: 400;
+  color: var(--highlight-color);
+}
+
+.search-bar {
+  @apply w-2/3 mt-8 rounded-xl;
+  animation: fadeIn 1000ms forwards 500ms; /* Reuse fadeIn with a delay */
+  opacity: 0;
+  transition: box-shadow 0.3s;
+}
+
+.search-bar:hover {
+  /* box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5); /* Adjust values as needed */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+
+.hero-form {
+  @apply flex justify-center items-center;
+}
+
+
+.input-wrapper {
+  @apply w-full;
+  position: relative;
+}
+
+
+.hero-input {
+  @apply text-xl px-4 py-3 rounded-l-xl w-full;
+  color: black;
+  line-height: 2.4rem;
+}
+
+.hero-button {
+  @apply py-2 pr-2 rounded-r-xl bg-white;
+}
+
+
+.clear-icon {
+  display: none;
+  font-size: 3rem;
+  position: absolute;
+  top: -15%;
+  right: 2%; 
+  color: #333; /* Dark gray for contrast against light backgrounds */
+  cursor: pointer; /* Indicates clickable area */
+  transition: color 0.2s ease; /* Smooth transition for hover effect */
+}
+
+/* Optional: Hover effect for better user interaction */
+.clear-icon:hover {
+  color: #999; /* Lighter shade for hover state */
+}
+
+
+
+
+
+.filters-section {
+  @apply flex mb-6 py-4;
+}
+
+.filters {
+  @apply flex grow items-start gap-6;
+}
+
+.recipes-counter {
+  @apply p-3 text-lg;
+}
+
+.dropdown {
+  @apply rounded-lg py-3 mr-8 px-3;
+  position: relative;
+  display: inline-block;
+  background-color: var(--bg-white);
+  width: 200px;
+  margin: 10px;
+  /* z-index: 1; */
+}
+
+.dropdown-button { 
+  @apply px-0 py-1;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+}
+
+
+.dropdown-content {
+  @apply py-2;
+  display: none;
+  position: absolute;
+  background-color: var(--bg-white);
+
+/*  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 100%;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  */
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.itemsList {
+  max-height: 150px;
+  overflow-y: auto;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.dropdown-item {
+  @apply px-3 py-1 text-sm rounded-lg;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--highlight-color) ;
+}
+
+.filter-chosen {
+  @apply mt-7 ml-0 px-3 py-2 rounded-lg;
+  position: absolute;
+  display: none;
+  z-index: -1;
+  width: 100%;
+  background-color: var(--highlight-color) ;
+}
+
+.filter-chosen span {
+
+}
+
+/* ======================= */
+
+/* Recipes Grid */
+.recipes-grid {
+    @apply py-8 px-0 flex flex-wrap; /* Using the custom CSS variable */
+    /*background-color: (--recipes-grid-bg-color);*/
+}
+
+.bg-recipes-grid {
+    /*background-color: var(--recipes-grid-bg-color);*/
+  }
+
+.section-title {
+  @apply text-3xl font-bold mb-6 text-center;
+}
+
+/*
+.recipe-cards {
+  @apply flex flex-wrap -mx-4;
+}
+*/
+
+.recipe-card {
+  @apply w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4;
+}
+
+.recipe-card-content {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
+}
+
+.recipe-image {
+  @apply w-full h-48 object-cover;
+}
+
+.recipe-details {
+  @apply p-4;
+}
+
+.recipe-title {
+  @apply text-xl font-bold mb-2;
+}
+
+.recipe-description {
+  @apply text-blue-700;
+}
+

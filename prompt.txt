@@ -1,0 +1,26 @@
+generate html css and js for a website that shows recipes
+contained in the recipes.js data file that contains data 
+as shown in the file attached below.
+No inline css.
+No inline tailwind.
+Use tailwind in a external main.css file.
+Page has an hero section where is the search bar, then a main section 
+with each recipe contained in a <figure> nodes.
+Hero section has a overlay with opacity transition 0.3s
+Use semantic html.
+Recipes grid has 3 column.
+Body has max-width 1440px.
+Hero section has the background image assets/hero-background.jpg
+Website is in french but code and comments in english.
+
+
+
+
+Generate html, js, css :
+create dropdown list :
+- show only title if not selected
+- hide items if not selected
+- show items list if selected
+- items list has fixed height, scroll if items list longer than fixed height
+- dropdown list must contain search input field as first item
+- at any change show items that contains search term
