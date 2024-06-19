@@ -135,6 +135,9 @@ async function initializeApp() {
     try {
         const recipes = await fetchRecipesData();
         initializeClearableInputs();
+        renderRecipesGrid(recipes);
+        initializeFilters(recipes);
+
         const searchInput = document.getElementById('mainSearchInput');
         searchInput.addEventListener('input', () => {
             const inputText = searchInput.value;
@@ -143,9 +146,8 @@ async function initializeApp() {
             const filteredRecipes = filterRecipesByName(recipes, inputText);
             console.log(filteredRecipes);
             renderRecipesGrid(filteredRecipes);
-            initializeFilters(filteredRecipes);
         });
-        renderRecipesGrid(recipes);
+
     } catch (error) {
         console.error('Initialization failed:', error);
     }

@@ -123,7 +123,7 @@ main {
 }
 
 .dropdown {
-  @apply rounded-lg py-3 mr-8 px-3;
+  @apply rounded-lg py-3 mr-8;
   position: relative;
   display: inline-block;
   background-color: var(--bg-white);
@@ -133,7 +133,7 @@ main {
 }
 
 .dropdown-button { 
-  @apply px-0 py-1;
+  @apply px-3 py-1;
     width: 100%;
     cursor: pointer;
     text-align: left;
@@ -181,17 +181,24 @@ main {
   background-color: var(--highlight-color) ;
 }
 
-.filter-chosen {
-  @apply mt-7 ml-0 px-3 py-2 rounded-lg;
+.filter-selected {
+  @apply mt-10 ml-0 rounded-lg flex;
   position: absolute;
   display: none;
   z-index: -1;
   width: 100%;
-  background-color: var(--highlight-color) ;
+
 }
 
-.filter-chosen span {
-
+.filter-selected span {
+  @apply my-20 ml-0 mr-2 px-3 py-2 rounded-lg text-nowrap;
+  /*
+  position: absolute;
+  */
+  white-space: nowrap;
+  z-index: -1;
+  width: 100%;
+  background-color: var(--highlight-color) ;
 }
 
 /* ======================= */
