@@ -14,7 +14,7 @@
 
 /* Body */
 body {
-  @apply bg-gray-100 mx-auto max-w-7xl;
+  @apply bg-gray-100 mx-auto max-w-7xl px-8;
 }
 
 main {
@@ -134,7 +134,7 @@ main {
 .dropdown-button { 
   @apply px-3 py-2 rounded-lg;
     width: 100%;
-    cursor: pointer;
+    /*cursor: pointer;*/
     text-align: left;
     background-color: var(--bg-white);
 }
@@ -187,21 +187,42 @@ main {
   display: none;
   /*width: inherit;*/
   overflow: visible;
-  z-index: -1;
-
 }
 
-.filter-selected span {
-  @apply mt-0 mb-2 ml-0 mr-2 px-3 py-1 
-         rounded-lg text-sm text-nowrap;
+.filter-selected .tag-wrapper {
+  @apply mt-0 mb-2 ml-0 mr-2 pl-3 pr-2 py-1 
+         rounded-lg;
   /*
   position: absolute;
   */
   flex-grow: 0;
-  white-space: nowrap;
-  z-index: -1;
   background-color: var(--highlight-color) ;
 }
+
+
+.filter-selected .tag-content {
+  @apply text-sm text-nowrap;
+
+  white-space: nowrap;
+}
+
+.filter-selected .remove-tag {
+  @apply ml-2 mr-1;
+  display: inline-block;
+  color: #555; /* Dark gray for contrast */
+  font-size: 1rem;
+  cursor: pointer; /* Indicates clickable area */
+  transition: color 0.2s ease, transform 0.2s ease; 
+}
+
+/* Optional: Hover effect for better user interaction */
+.filter-selected .remove-tag:hover {
+  color: #000; /* Lighter shade for hover state */
+  transform: scale(1.8);
+}
+
+
+
 
 /* ======================= */
 

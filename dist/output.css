@@ -488,6 +488,9 @@ video {
 .ml-0 {
   margin-left: 0px;
 }
+.ml-2 {
+  margin-left: 0.5rem;
+}
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -544,6 +547,9 @@ video {
 }
 .w-full {
   width: 100%;
+}
+.max-w-7xl {
+  max-width: 80rem;
 }
 .flex-grow {
   flex-grow: 1;
@@ -656,6 +662,9 @@ video {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.pl-3 {
+  padding-left: 0.75rem;
+}
 .pr-2 {
   padding-right: 0.5rem;
 }
@@ -739,6 +748,8 @@ body {
   max-width: 80rem;
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 main {
@@ -899,7 +910,7 @@ main {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
     width: 100%;
-    cursor: pointer;
+    /*cursor: pointer;*/
     text-align: left;
     background-color: var(--bg-white);
 }
@@ -961,30 +972,52 @@ main {
   display: none;
   /*width: inherit;*/
   overflow: visible;
-  z-index: -1;
 }
 
-.filter-selected span {
+.filter-selected .tag-wrapper {
   margin-top: 0px;
   margin-bottom: 0.5rem;
   margin-left: 0px;
   margin-right: 0.5rem;
-  text-wrap: nowrap;
   border-radius: 0.5rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.5rem;
   /*
   position: absolute;
   */
   flex-grow: 0;
-  white-space: nowrap;
-  z-index: -1;
   background-color: var(--highlight-color) ;
 }
+
+
+.filter-selected .tag-content {
+  text-wrap: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+
+  white-space: nowrap;
+}
+
+.filter-selected .remove-tag {
+  margin-left: 0.5rem;
+  margin-right: 0.25rem;
+  display: inline-block;
+  color: #555; /* Dark gray for contrast */
+  font-size: 1rem;
+  cursor: pointer; /* Indicates clickable area */
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Optional: Hover effect for better user interaction */
+.filter-selected .remove-tag:hover {
+  color: #000; /* Lighter shade for hover state */
+  transform: scale(1.8);
+}
+
+
+
 
 /* ======================= */
 

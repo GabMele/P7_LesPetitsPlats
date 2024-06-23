@@ -37,7 +37,6 @@ function renderRecipesGrid(recipes) {
 
     //console.log('Recipes grid:', grid);
     //console.log("Rendering recipes...");
-
     //console.log(recipes);
 
     grid.innerHTML = '';
@@ -46,10 +45,6 @@ function renderRecipesGrid(recipes) {
        // console.log('Rendering recipe:', recipe.name);
 
         const card = createRecipeCard(recipe);
-
-
-        //console.log('Recipe card created:', card);
-
         grid.appendChild(card);
     });
 }

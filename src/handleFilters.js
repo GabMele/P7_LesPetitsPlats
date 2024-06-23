@@ -97,10 +97,40 @@ function setupSearchFilter(searchInput, itemsList) {
 }
 
 
+// function setupDropdownItemSelection(itemsList, dropdown) {
+//     // console.log('Setting up item selection');
+//     // console.log("itemsList:", itemsList);
+//     // console.log("dropdown:", dropdown);
+
+//     itemsList.addEventListener('click', function(e) {
+//         console.log("e.target:", e.target);
+//         if (e.target && e.target.matches('.dropdown-item')) {
+//             const selectedItem = e.target.textContent;
+
+//             const selectedFilters = dropdown.querySelector('.filter-selected');
+//             const existingItems = new Set(Array.from(selectedFilters.querySelectorAll('span'))
+//                 .map(span => span.textContent));
+
+//             if (!existingItems.has(selectedItem)) {
+//                 const newTagWrapper = document.createElement('span');
+//                 newTagWrapper.textContent = selectedItem;
+
+//                 selectedFilters.appendChild(newTagWrapper);
+//                 selectedFilters.style.display = 'flex';
+//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
+//             } else {
+//                 //console.log("Item already selected:", selectedItem);
+//             }
+//         }
+//     });
+// }
+
+
+
 function setupDropdownItemSelection(itemsList, dropdown) {
-    // console.log('Setting up item selection');
-    // console.log("itemsList:", itemsList);
-    // console.log("dropdown:", dropdown);
+    console.log('Setting up item selection');
+    console.log("itemsList:", itemsList);
+    console.log("dropdown:", dropdown);
 
     itemsList.addEventListener('click', function(e) {
         console.log("e.target:", e.target);
@@ -112,9 +142,33 @@ function setupDropdownItemSelection(itemsList, dropdown) {
                 .map(span => span.textContent));
 
             if (!existingItems.has(selectedItem)) {
-                const newItem = document.createElement('span');
-                newItem.textContent = selectedItem;
-                selectedFilters.appendChild(newItem);
+                const newTagWrapper = document.createElement('div');
+                newTagWrapper.classList.add('tag-wrapper');
+                const newTagContent = document.createElement('span');
+                newTagContent.textContent = selectedItem;
+                newTagContent.classList.add('tag-content');
+
+                // Create and add the close button (cross)
+                const closeButton = document.createElement('span');
+                closeButton.textContent = '✕';
+                closeButton.classList.add('remove-tag');
+                //closeButton.style.cursor = 'pointer';
+
+                // Add event listener to the close button to remove the item
+                closeButton.addEventListener('click', function() {
+                    newTagWrapper.remove();
+                    existingItems.delete(selectedItem);
+                    if (selectedFilters.children.length === 0) {
+                        selectedFilters.style.display = 'none';
+                    }
+                });
+                
+                newTagWrapper.appendChild(newTagContent);
+                newTagWrapper.appendChild(closeButton);
+
+                console.log("newTagWrapper:", newTagWrapper);
+
+                selectedFilters.appendChild(newTagWrapper);
                 selectedFilters.style.display = 'flex';
                 dropdown.querySelector('.dropdown-content').style.display = 'none';
             } else {
@@ -123,4 +177,3 @@ function setupDropdownItemSelection(itemsList, dropdown) {
         }
     });
 }
-
