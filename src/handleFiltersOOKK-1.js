@@ -4,13 +4,13 @@ export function initializeFilters(recipes) {
     const dropdowns = ['ingredient-filter', 'appliance-filter', 'utensil-filter'];
     const filters = initializeFilterSets(dropdowns);
 
-    // console.log('Filters:', filters);
-    // console.log('Recipes:', recipes);
+    console.log('Filters:', filters);
+    console.log('Recipes:', recipes);
 
     populateFilters(recipes, filters);
 
-    // console.log('Filters:', filters);
-    // console.log('Recipes:', recipes);
+    console.log('Filters:', filters);
+    console.log('Recipes:', recipes);
 
     initializeDropdowns(dropdowns, filters);
 }
@@ -37,11 +37,11 @@ function initializeDropdowns(dropdowns, filters) {
         itemsList.innerHTML = '';
 
 
-        // console.log("dropdown : ", dropdown);
-        // console.log("itemsList : ", itemsList);
-        // console.log("searchInput : ", searchInput);
-        // console.log("filters[id] : ", filters[id]);
-        // console.log("------------------");
+        console.log("dropdown : ", dropdown);
+        console.log("itemsList : ", itemsList);
+        console.log("searchInput : ", searchInput);
+        console.log("filters[id] : ", filters[id]);
+        console.log("------------------");
 
         populateDropdownItems(itemsList, filters[id]);
         setupDropdownToggle(dropdown, searchInput);
@@ -98,9 +98,9 @@ function setupSearchFilter(searchInput, itemsList) {
 
 
 function setupDropdownItemSelection(itemsList, dropdown) {
-    // console.log('Setting up item selection');
-    // console.log("itemsList:", itemsList);
-    // console.log("dropdown:", dropdown);
+    console.log('Setting up item selection');
+    console.log("itemsList:", itemsList);
+    console.log("dropdown:", dropdown);
 
     itemsList.addEventListener('click', function(e) {
         console.log("e.target:", e.target);

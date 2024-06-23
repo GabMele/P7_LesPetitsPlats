@@ -111,7 +111,7 @@ main {
 
 
 .filters-section {
-  @apply mt-4 flex px-0;
+  @apply flex mb-6 py-4 px-0;
 }
 
 .filters {
@@ -123,20 +123,20 @@ main {
 }
 
 .dropdown {
-  @apply rounded-lg mr-8;
+  @apply rounded-lg py-3 mr-8;
   position: relative;
   display: flex;
-  flex-direction: column;
+  background-color: var(--bg-white);
   width: 300px;
+  margin: 10px;
   /* z-index: 1; */
 }
 
 .dropdown-button { 
-  @apply px-3 py-2 rounded-lg;
+  @apply px-3 py-1;
     width: 100%;
     cursor: pointer;
     text-align: left;
-    background-color: var(--bg-white);
 }
 
 
@@ -182,8 +182,9 @@ main {
 }
 
 .filter-selected {
-  @apply mt-4 ml-0 rounded-lg;
+  @apply mt-14 ml-0 rounded-lg;
   flex-wrap: wrap;
+  position: absolute;
   display: none;
   /*width: inherit;*/
   overflow: visible;
@@ -207,10 +208,13 @@ main {
 
 /* Recipes Grid */
 .recipes-grid {
-    @apply py-4 px-0 flex flex-wrap; /* Using the custom CSS variable */
+    @apply py-8 px-0 flex flex-wrap; /* Using the custom CSS variable */
     /*background-color: (--recipes-grid-bg-color);*/
 }
 
+.bg-recipes-grid {
+    /*background-color: var(--recipes-grid-bg-color);*/
+  }
 
 .section-title {
   @apply text-3xl font-bold mb-6 text-center;

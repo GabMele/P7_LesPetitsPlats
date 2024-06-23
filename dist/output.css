@@ -476,9 +476,8 @@ video {
   margin-left: auto;
   margin-right: auto;
 }
-.my-20 {
-  margin-top: 5rem;
-  margin-bottom: 5rem;
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 .mb-3 {
   margin-bottom: 0.75rem;
@@ -492,8 +491,14 @@ video {
 .mr-2 {
   margin-right: 0.5rem;
 }
-.mt-10 {
-  margin-top: 2.5rem;
+.mt-0 {
+  margin-top: 0px;
+}
+.mt-14 {
+  margin-top: 3.5rem;
+}
+.mt-4 {
+  margin-top: 1rem;
 }
 .mt-8 {
   margin-top: 2rem;
@@ -623,10 +628,6 @@ video {
   padding-left: 0px;
   padding-right: 0px;
 }
-.px-16 {
-  padding-left: 4rem;
-  padding-right: 4rem;
-}
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -646,6 +647,10 @@ video {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 .py-8 {
   padding-top: 2rem;
@@ -737,8 +742,8 @@ body {
 }
 
 main {
-  padding-left: 4rem;
-  padding-right: 4rem;
+  padding-left: 0px;
+  padding-right: 0px;
   padding-top: 1rem;
 }
 
@@ -858,10 +863,10 @@ main {
 
 
 .filters-section {
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
   display: flex;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .filters {
@@ -880,24 +885,23 @@ main {
 .dropdown {
   margin-right: 2rem;
   border-radius: 0.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
   position: relative;
-  display: inline-block;
-  background-color: var(--bg-white);
-  width: 200px;
-  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
   /* z-index: 1; */
 }
 
 .dropdown-button {
+  border-radius: 0.5rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
     width: 100%;
     cursor: pointer;
     text-align: left;
+    background-color: var(--bg-white);
 }
 
 
@@ -926,7 +930,7 @@ main {
 }
 
 .itemsList {
-  max-height: 150px;
+  max-height: 200px;
   overflow-y: auto;
   list-style-type: none;
   padding: 0;
@@ -950,33 +954,35 @@ main {
 }
 
 .filter-selected {
-  margin-top: 2.5rem;
+  margin-top: 1rem;
   margin-left: 0px;
-  display: flex;
   border-radius: 0.5rem;
-  position: absolute;
+  flex-wrap: wrap;
   display: none;
+  /*width: inherit;*/
+  overflow: visible;
   z-index: -1;
-  width: 100%;
 }
 
 .filter-selected span {
-  margin-top: 5rem;
-  margin-bottom: 5rem;
+  margin-top: 0px;
+  margin-bottom: 0.5rem;
   margin-left: 0px;
   margin-right: 0.5rem;
   text-wrap: nowrap;
   border-radius: 0.5rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
   /*
   position: absolute;
   */
+  flex-grow: 0;
   white-space: nowrap;
   z-index: -1;
-  width: 100%;
   background-color: var(--highlight-color) ;
 }
 
@@ -986,16 +992,13 @@ main {
 .recipes-grid {
   display: flex;
   flex-wrap: wrap;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   padding-left: 0px;
   padding-right: 0px; /* Using the custom CSS variable */
     /*background-color: (--recipes-grid-bg-color);*/
 }
 
-.bg-recipes-grid {
-    /*background-color: var(--recipes-grid-bg-color);*/
-  }
 
 .section-title {
   margin-bottom: 1.5rem;
