@@ -29,7 +29,7 @@ function createElement(type, className, content) {
     return element;
 }
 
-// Refactored createRecipeCard function using the generic createElement function
+
 function createRecipeCard(recipe) {
     const card = createElement('figure', 'recipe-card');
 
@@ -60,7 +60,6 @@ function createRecipeCard(recipe) {
     return card;
 }
 
-// The rest of the functions remain unchanged
 
 function createIngredientsList(ingredients) {
     const list = document.createElement('ul');
@@ -75,18 +74,33 @@ function createIngredientsList(ingredients) {
     return list;
 }
 
+
 function toggleClearIcon(icon, condition) {
     icon.style.display = condition ? 'inline' : 'none';
 }
 
-function handleInputChange(inputValue, icon, recipes) {
-    const inputText = inputValue;
-    const applyFilter = inputText.length >= 3;
-    const filteredRecipes = applyFilter ? filterRecipesByName(recipes, inputText) : recipes;
-    renderRecipesGrid(filteredRecipes);
-    initializeFilters(filteredRecipes);
-    toggleClearIcon(icon, inputText.trim() !== '');
+
+// function handleInputChange(inputText, icon, recipes) {
+//     const applyFilter = inputText.length >= 3;
+//     const filteredRecipes = applyFilter ? filterRecipesByName(recipes, inputText) : recipes;
+//     renderRecipesGrid(filteredRecipes);
+//     initializeFilters(filteredRecipes);
+//     toggleClearIcon(icon, inputText.trim() !== '');
+// }
+
+
+function handleInputChange(inputText, icon, recipes) {
+    if (inputText.length >= 3) {
+        const filteredRecipes = filterRecipesByName(recipes, inputText);
+        renderRecipesGrid(filteredRecipes);
+        initializeFilters(filteredRecipes);
+        toggleClearIcon(icon, inputText.trim() !== ''); 
+    }
 }
+
+
+
+
 
 
 // Function to handle clear icon click
@@ -97,18 +111,18 @@ function handleClearIcon(searchInput, clearIcon, recipes) {
     initializeFilters(recipes); // Re-initialize filters to reflect the cleared search
 }
 
-// Main initialization function
+
 async function initializeApp() {
     try {
         const recipes = await fetchRecipesData(); // Fetching recipes data
         renderRecipesGrid(recipes); // Initial rendering of recipes grid
         initializeFilters(recipes); // Initial setup of filters
 
-        const searchInput = document.getElementById('mainSearchInput'); // Getting search input element
+        const mainSearchInput = document.getElementById('mainSearchInput'); // Getting search input element
         const clearIcon = document.querySelector('.clear-icon'); // Getting clear icon element
 
-        searchInput.addEventListener('input', () => handleInputChange(searchInput.value, clearIcon, recipes));
-        clearIcon.addEventListener('click', () => handleClearIcon(searchInput, clearIcon, recipes));
+        mainSearchInput.addEventListener('input', () => handleInputChange(mainSearchInput.value, clearIcon, recipes));
+        clearIcon.addEventListener('click', () => handleClearIcon(mainSearchInput, clearIcon, recipes));
 
     } catch (error) {
         console.error('Initialization failed:', error);

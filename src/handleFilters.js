@@ -7,13 +7,17 @@ export function initializeFilters(recipes) {
     // console.log('Filters:', filters);
     // console.log('Recipes:', recipes);
 
+
     populateFilters(recipes, filters);
 
-
-    console.log('Populate by these Recipes:', recipes);
-    console.log('Populate these Filters:', filters);
+    console.log("initialized Filters : ", filters);
+    // console.log('Populate by these Recipes:', recipes);
+    // console.log('Populate these Filters:', filters);
 
     initializeDropdowns(dropdowns, filters);
+
+    console.log("initialized Dropdowns : ", dropdowns);
+
 }
 
 function initializeFilterSets(dropdowns) {
@@ -85,10 +89,13 @@ function initializeDropdowns(dropdowns, filters) {
 
 function populateDropdownItems(itemsList, filterSet) {
     filterSet.forEach(item => {
-        const li = document.createElement('li');
-        li.classList.add('dropdown-item');
-        li.textContent = item;
-        itemsList.appendChild(li);
+        // const li = document.createElement('li');
+        // li.classList.add('dropdown-item');
+        // li.textContent = item;
+        // itemsList.appendChild(li);
+
+        addItemToList(item, itemsList);
+
     });
 }
 
@@ -96,7 +103,10 @@ function setupDropdownToggle(dropdown, searchInput) {
     const dropdownButton = dropdown.querySelector('.dropdown-button');
     dropdownButton.addEventListener('click', function() {
         const dropdownContent = this.nextElementSibling;
-        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        // dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+
+        dropdownContent.style.display = 'block';
+
         searchInput.focus();
     });
     hideDropdownOnBlur(dropdown, searchInput);
@@ -105,15 +115,17 @@ function setupDropdownToggle(dropdown, searchInput) {
 
 
 function hideDropdownOnBlur(dropdown, searchInput) {
-    console.log('Setting up blur effect');
-    console.log("dropdown:", dropdown);
-    console.log("searchInput:", searchInput);
+    console.log('--------Setting up blur effect');
+    console.log("---dropdown:", dropdown);
+    console.log("---searchInput:", searchInput.value);
 
     searchInput.addEventListener('blur', function() {
 
-        console.log('Blur event triggered');
-        console.log("dropdown:", dropdown);
-        console.log("searchInput:", searchInput);
+
+        console.log('*****************************');
+        console.log('******* Blur event triggered ******');
+        console.log("**** dropdown:", dropdown);
+        console.log("**** searchInput:", searchInput.value);
         // console.log(dropdown);
         setTimeout(() => {
             dropdown.querySelector('.dropdown-content').style.display = 'none';
@@ -145,16 +157,16 @@ function setupSearchFilter(searchInput, itemsList) {
 //         if (e.target && e.target.matches('.dropdown-item')) {
 //             const selectedItem = e.target.textContent;
 
-//             const selectedFilters = dropdown.querySelector('.filter-selected');
-//             const existingItems = new Set(Array.from(selectedFilters.querySelectorAll('span'))
+//             const selectedFiltersDiv = dropdown.querySelector('.filter-selected');
+//             const existingItems = new Set(Array.from(selectedFiltersDiv.querySelectorAll('span'))
 //                 .map(span => span.textContent));
 
 //             if (!existingItems.has(selectedItem)) {
 //                 const newTagWrapper = document.createElement('span');
 //                 newTagWrapper.textContent = selectedItem;
 
-//                 selectedFilters.appendChild(newTagWrapper);
-//                 selectedFilters.style.display = 'flex';
+//                 selectedFiltersDiv.appendChild(newTagWrapper);
+//                 selectedFiltersDiv.style.display = 'flex';
 //                 dropdown.querySelector('.dropdown-content').style.display = 'none';
 //             } else {
 //                 //console.log("Item already selected:", selectedItem);
@@ -165,46 +177,216 @@ function setupSearchFilter(searchInput, itemsList) {
 
 
 
+// function setupDropdownItemSelection(itemsList, dropdown) {
+//     let items = Array.from(itemsList.children);
+//     itemsList.addEventListener('click', function(e) {
+//         if (e.target && e.target.matches('.dropdown-item')) {
+//             const selectedItem = e.target.textContent.trim();
+//             const selectedIndex = items.indexOf(e.target);
+
+//             const selectedFiltersDiv = dropdown.querySelector('.filter-selected');
+//             const existingItems = new Set(Array.from(selectedFiltersDiv.querySelectorAll('.tag-content'))
+//                 .map(span => span.textContent.trim()));
+
+//             if (!existingItems.has(selectedItem)) {
+//                 const newTagWrapper = createTag(selectedItem, selectedIndex, itemsList, dropdown);
+
+//                 selectedFiltersDiv.appendChild(newTagWrapper);
+//                 selectedFiltersDiv.style.display = 'flex';
+//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
+//             } else {
+//                 console.log("Item already selected:", selectedItem);
+//             }
+//         }
+//     });
+// }
+
+
+
+
+// function createTag(item, index, dropdown) {
+
+//     console.log("createTag : ", item, index);
+
+//     const newTagWrapper = document.createElement('div');
+//     newTagWrapper.classList.add('tag-wrapper');
+//     const newTagContent = document.createElement('span');
+//     newTagContent.textContent = item;
+//     newTagContent.classList.add('tag-content');
+
+//     const closeButton = document.createElement('span');
+//     closeButton.textContent = '✕';
+//     closeButton.classList.add('remove-tag');
+//     closeButton.addEventListener('click', function() {
+//         // Remove the tag wrapper from the selectedFiltersDiv
+//         newTagWrapper.remove();
+
+//         console.log("dropdown :", dropdown);
+//         console.log("dropdown.children :", dropdown.children);
+//         console.log("itemsList :", itemsList);
+//         console.log("itemsList.children :", itemsList.children);
+//         console.log("index :", index);
+//         const itemToRemove = itemsList.querySelector(`.dropdown-item:nth-child(${index + 1})`);
+
+//         console.log("itemToRemove :", itemToRemove);
+
+//         if (itemToRemove) {
+//             itemsList.removeChild(itemToRemove);
+//         }
+//     });
+
+//     newTagWrapper.appendChild(newTagContent);
+//     newTagWrapper.appendChild(closeButton);
+
+//     return newTagWrapper;
+// }
+
+
 function setupDropdownItemSelection(itemsList, dropdown) {
-    itemsList.addEventListener('click', function(e) {
+    // const items = Array.from(itemsList.children)
+    // .map(item => item.textContent.trim());
+    ;
+
+    itemsList.addEventListener('click', (e) => {
         if (e.target && e.target.matches('.dropdown-item')) {
-            const selectedItem = e.target.textContent.trim();
-
-            const selectedFilters = dropdown.querySelector('.filter-selected');
-            const existingItems = new Set(Array.from(selectedFilters.querySelectorAll('.tag-content'))
-                .map(span => span.textContent.trim()));
-
-            if (!existingItems.has(selectedItem)) {
-                const newTagWrapper = createTag(selectedItem);
-
-                selectedFilters.appendChild(newTagWrapper);
-                selectedFilters.style.display = 'flex';
-                dropdown.querySelector('.dropdown-content').style.display = 'none';
-            } else {
-                console.log("Item already selected:", selectedItem);
-            }
+            handleItemClick(e.target, itemsList, dropdown);
         }
     });
+
 }
 
+function handleItemClick(target, itemsList, dropdown) {
+
+    console.log("handleItemClick TARGET : ", target)
+    //console.log("handleItemClick ITEMS : ", items)
+    console.log("handleItemClick itemsList : ", itemsList)
+    console.log("handleItemClick dropdown : ", dropdown)
 
 
-function createTag(item) {
+
+    const selectedItem = target.textContent.trim();
+    //const selectedIndex = items.indexOf(target);
+    const selectedFiltersDiv = dropdown.querySelector('.filter-selected');
+    const existingTags = new Set(Array.from(selectedFiltersDiv.querySelectorAll('.tag-content'))
+                                .map(span => span.textContent.trim()));
+
+
+        console.log("handleItemClick ------------")
+        console.log("selectedItem :", selectedItem)
+        //console.log("selectedIndex :", selectedIndex)
+        console.log("selectedFiltersDiv :", selectedFiltersDiv)
+        console.log("existingTags :", existingTags)
+
+
+    if (!existingTags.has(selectedItem)) {
+
+
+        console.log("ITEM NOT EXISTING => CREATE TAG ------------")
+        console.log("selectedItem :", selectedItem)
+        //console.log("selectedIndex :", selectedIndex)
+        console.log("selectedFiltersDiv :", selectedFiltersDiv)
+        console.log("existingTags :", existingTags)
+
+
+        const newTagWrapper = createTag(selectedItem, itemsList);
+
+        selectedFiltersDiv.appendChild(newTagWrapper);
+        selectedFiltersDiv.style.display = 'flex';
+        dropdown.querySelector('.dropdown-content').style.display = 'none';
+    } else {
+        console.log("Item already selected:", selectedItem);
+    }
+}
+
+function createTag(item, itemsList) {
     const newTagWrapper = document.createElement('div');
     newTagWrapper.classList.add('tag-wrapper');
+
     const newTagContent = document.createElement('span');
     newTagContent.textContent = item;
     newTagContent.classList.add('tag-content');
 
-    const closeButton = document.createElement('span');
-    closeButton.textContent = '✕';
-    closeButton.classList.add('remove-tag');
-    closeButton.addEventListener('click', function() {
-        newTagWrapper.remove();
-    });
+    const closeButton = createCloseButton(newTagWrapper, itemsList);
 
     newTagWrapper.appendChild(newTagContent);
     newTagWrapper.appendChild(closeButton);
+    removeItemFromList(item, itemsList)
 
     return newTagWrapper;
 }
+
+function createCloseButton(tagWrapper, itemsList) {
+    const closeButton = document.createElement('span');
+    closeButton.textContent = '✕';
+    closeButton.classList.add('remove-tag');
+
+    closeButton.addEventListener('click', () => {
+        console.log("----- closeButton ---- ");
+        console.log("tagWrapper:", tagWrapper);
+        console.log("itemsList:", itemsList);
+
+        const itemToAdd = tagWrapper.querySelector('.tag-content').textContent.trim();
+
+        console.log("itemToAdd:", itemToAdd);
+        
+        // Remove the tagWrapper element from the DOM
+        tagWrapper.remove();
+
+        // Remove the corresponding item from the list
+        addItemToList(itemToAdd, itemsList);
+    });
+
+    return closeButton;
+}
+
+function removeItemFromList(itemToRemove, itemsList) {
+    const listItem = Array.from(itemsList.children).find(child => 
+        child.textContent.trim() === itemToRemove
+    );
+
+    console.log("itemsList:", itemsList);
+    console.log("itemsList.children:", itemsList.children);
+    console.log("itemToRemove:", itemToRemove);
+    console.log("listItem:", listItem);
+
+    if (listItem) {
+        itemsList.removeChild(listItem);
+    }
+}
+
+
+
+function addItemToList(itemToAdd, itemsList) {
+    const li = document.createElement('li');
+    li.classList.add('dropdown-item');
+    li.textContent = itemToAdd;
+    itemsList.appendChild(li);
+}
+
+
+
+
+
+
+
+
+
+// function createTag(item) {
+//     const newTagWrapper = document.createElement('div');
+//     newTagWrapper.classList.add('tag-wrapper');
+//     const newTagContent = document.createElement('span');
+//     newTagContent.textContent = item;
+//     newTagContent.classList.add('tag-content');
+
+//     const closeButton = document.createElement('span');
+//     closeButton.textContent = '✕';
+//     closeButton.classList.add('remove-tag');
+//     closeButton.addEventListener('click', function() {
+//         newTagWrapper.remove();
+//     });
+
+//     newTagWrapper.appendChild(newTagContent);
+//     newTagWrapper.appendChild(closeButton);
+
+//     return newTagWrapper;
+// }
