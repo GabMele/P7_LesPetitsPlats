@@ -1,22 +1,17 @@
 // handleFilters.js
 
+import { filterRecipesByTags } from './handleRecipesSearch.js';
+import { renderRecipesGrid }from './home.js';
+
 export function initializeFilters(recipes) {
-    const dropdowns = ['ingredient-filter', 'appliance-filter', 'utensil-filter'];
+    const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
     const filters = initializeFilterSets(dropdowns);
-
-    // console.log('Filters:', filters);
-    // console.log('Recipes:', recipes);
-
 
     populateFilters(recipes, filters);
 
-    console.log("initialized Filters : ", filters);
-    // console.log('Populate by these Recipes:', recipes);
-    // console.log('Populate these Filters:', filters);
+    initializeDropdowns(dropdowns, filters, recipes);
 
-    initializeDropdowns(dropdowns, filters);
-
-    console.log("initialized Dropdowns : ", dropdowns);
+    console.log("initialized Dropdowns DONE : ", dropdowns);
 
 }
 
@@ -35,14 +30,14 @@ function initializeFilterSets(dropdowns) {
 function populateFilters(recipes, filters) {
     const uniqueIngredients = new Set();
     const uniqueAppliances = new Set();
-    const uniqueUtensils = new Set();
+    const uniqueustensils = new Set();
 
     recipes.forEach(recipe => {
         recipe.ingredients.forEach(ingredient => {
             const ingredientName = ingredient.ingredient;
             const lowerIngredientName = ingredientName.toLowerCase();
             if (!uniqueIngredients.has(lowerIngredientName)) {
-                filters['ingredient-filter'].add(ingredientName); // Add to set in filters object
+                filters['ingredients-filter'].add(ingredientName); // Add to set in filters object
                 uniqueIngredients.add(lowerIngredientName);
             }
         });
@@ -57,16 +52,16 @@ function populateFilters(recipes, filters) {
         recipe.ustensils.forEach(ustensil => {
             const ustensilName = ustensil;
             const lowerUstensilName = ustensilName.toLowerCase();
-            if (!uniqueUtensils.has(lowerUstensilName)) {
-                filters['utensil-filter'].add(ustensilName); // Add to set in filters object
-                uniqueUtensils.add(lowerUstensilName);
+            if (!uniqueustensils.has(lowerUstensilName)) {
+                filters['ustensils-filter'].add(ustensilName); // Add to set in filters object
+                uniqueustensils.add(lowerUstensilName);
             }
         });
     });
 }
 
 
-function initializeDropdowns(dropdowns, filters) {
+function initializeDropdowns(dropdowns, filters, recipes) {
     dropdowns.forEach(id => {
         const dropdown = document.getElementById(id);
         const searchInput = dropdown.querySelector('.searchInput');
@@ -83,7 +78,7 @@ function initializeDropdowns(dropdowns, filters) {
         populateDropdownItems(itemsList, filters[id]);
         setupDropdownToggle(dropdown, searchInput);
         setupSearchFilter(searchInput, itemsList);
-        setupDropdownItemSelection(itemsList, dropdown);
+        setupDropdownItemSelection(itemsList, dropdown, recipes);
     });
 }
 
@@ -115,9 +110,9 @@ function setupDropdownToggle(dropdown, searchInput) {
 
 
 function hideDropdownOnBlur(dropdown, searchInput) {
-    console.log('--------Setting up blur effect');
-    console.log("---dropdown:", dropdown);
-    console.log("---searchInput:", searchInput.value);
+    console.log('----Setting up blur effect on : ', dropdown);
+    // console.log("---dropdown:", dropdown);
+    // console.log("---searchInput:", searchInput.value);
 
     searchInput.addEventListener('blur', function() {
 
@@ -242,61 +237,57 @@ function setupSearchFilter(searchInput, itemsList) {
 // }
 
 
-function setupDropdownItemSelection(itemsList, dropdown) {
+function setupDropdownItemSelection(itemsList, dropdown, recipes) {
     // const items = Array.from(itemsList.children)
     // .map(item => item.textContent.trim());
     ;
 
     itemsList.addEventListener('click', (e) => {
         if (e.target && e.target.matches('.dropdown-item')) {
-            handleItemClick(e.target, itemsList, dropdown);
+            handleItemClick(e.target, itemsList, dropdown, recipes);
         }
     });
 
 }
 
-function handleItemClick(target, itemsList, dropdown) {
-
-    console.log("handleItemClick TARGET : ", target)
-    //console.log("handleItemClick ITEMS : ", items)
-    console.log("handleItemClick itemsList : ", itemsList)
-    console.log("handleItemClick dropdown : ", dropdown)
-
-
+function handleItemClick(target, itemsList, dropdown, recipes) {
 
     const selectedItem = target.textContent.trim();
-    //const selectedIndex = items.indexOf(target);
     const selectedFiltersDiv = dropdown.querySelector('.filter-selected');
-    const existingTags = new Set(Array.from(selectedFiltersDiv.querySelectorAll('.tag-content'))
-                                .map(span => span.textContent.trim()));
+    const existingTags = Array.from(selectedFiltersDiv.querySelectorAll('.tag-content'))
+                                .map(span => span.textContent.trim());
 
-
-        console.log("handleItemClick ------------")
-        console.log("selectedItem :", selectedItem)
-        //console.log("selectedIndex :", selectedIndex)
-        console.log("selectedFiltersDiv :", selectedFiltersDiv)
-        console.log("existingTags :", existingTags)
-
-
-    if (!existingTags.has(selectedItem)) {
-
-
-        console.log("ITEM NOT EXISTING => CREATE TAG ------------")
-        console.log("selectedItem :", selectedItem)
-        //console.log("selectedIndex :", selectedIndex)
-        console.log("selectedFiltersDiv :", selectedFiltersDiv)
-        console.log("existingTags :", existingTags)
-
-
+    if (!existingTags.includes(selectedItem)) {
         const newTagWrapper = createTag(selectedItem, itemsList);
-
         selectedFiltersDiv.appendChild(newTagWrapper);
         selectedFiltersDiv.style.display = 'flex';
         dropdown.querySelector('.dropdown-content').style.display = 'none';
+
+        const tagsCategory = dropdown.id.split('-')[0];
+        console.log("Tags category:", tagsCategory);
+
+        // Initialize updatedTags if not already defined
+        var updatedTags = {};
+
+        updatedTags[tagsCategory] = existingTags;
+
+        updatedTags[tagsCategory].push(selectedItem);
+
+        console.log("BEFORE CALL filterRecipesByTags");
+        console.log("------ updatedTags:", updatedTags);
+
+
+        const filteredRecipes = filterRecipesByTags(recipes, updatedTags);
+
+        console.log("filteredRecipes by name and tags:", filteredRecipes);
+
+        renderRecipesGrid(filteredRecipes);
+        initializeFilters(filteredRecipes);
     } else {
         console.log("Item already selected:", selectedItem);
     }
 }
+
 
 function createTag(item, itemsList) {
     const newTagWrapper = document.createElement('div');
@@ -327,30 +318,31 @@ function createCloseButton(tagWrapper, itemsList) {
 
         const itemToAdd = tagWrapper.querySelector('.tag-content').textContent.trim();
 
-        console.log("itemToAdd:", itemToAdd);
+        //console.log("itemToAdd:", itemToAdd);
         
         // Remove the tagWrapper element from the DOM
         tagWrapper.remove();
 
         // Remove the corresponding item from the list
         addItemToList(itemToAdd, itemsList);
+        
     });
 
     return closeButton;
 }
 
 function removeItemFromList(itemToRemove, itemsList) {
-    const listItem = Array.from(itemsList.children).find(child => 
+    const listItemToRemove = Array.from(itemsList.children).find(child => 
         child.textContent.trim() === itemToRemove
     );
 
-    console.log("itemsList:", itemsList);
-    console.log("itemsList.children:", itemsList.children);
-    console.log("itemToRemove:", itemToRemove);
-    console.log("listItem:", listItem);
+    // console.log("itemsList:", itemsList);
+    // console.log("itemsList.children:", itemsList.children);
+    // console.log("itemToRemove:", itemToRemove);
+    // console.log("listItemToRemove:", listItemToRemove);
 
-    if (listItem) {
-        itemsList.removeChild(listItem);
+    if (listItemToRemove) {
+        itemsList.removeChild(listItemToRemove);
     }
 }
 

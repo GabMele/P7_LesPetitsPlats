@@ -3,7 +3,7 @@
 import { fetchData } from './api.js';
 import { DATA_JSON_PATH, RECIPES_IMAGES_PATH } from '../constants.js';
 import { initializeFilters } from './handleFilters.js';
-import filterRecipesByName from './handleRecipesSearch.js';
+import { filterRecipesByName } from './handleRecipesSearch.js';
 
 async function fetchRecipesData() {
     try {
@@ -15,7 +15,7 @@ async function fetchRecipesData() {
     }
 }
 
-function renderRecipesGrid(recipes) {
+export function renderRecipesGrid(recipes) {
     const grid = document.querySelector('.recipes-grid');
     grid.innerHTML = '';
     recipes.forEach(recipe => grid.appendChild(createRecipeCard(recipe)));
@@ -53,8 +53,14 @@ function createRecipeCard(recipe) {
     const ingredientsTitle = createElement('h3', null, 'Ingredients:');
     ingredientsDiv.appendChild(ingredientsTitle);
     ingredientsDiv.appendChild(createIngredientsList(recipe.ingredients));
-
     content.appendChild(ingredientsDiv);
+
+    const appliance = createElement('p', 'recipe-appliance', `Appliance: ${recipe.appliance}`);
+    content.appendChild(appliance);
+
+    const ustensils = createElement('p', 'recipe-ustensils', `Ustensils: ${recipe.ustensils.join(', ')}`);
+    content.appendChild(ustensils);
+
     card.appendChild(content);
 
     return card;
@@ -82,7 +88,7 @@ function toggleClearIcon(icon, condition) {
 
 // function handleInputChange(inputText, icon, recipes) {
 //     const applyFilter = inputText.length >= 3;
-//     const filteredRecipes = applyFilter ? filterRecipesByName(recipes, inputText) : recipes;
+//     const filteredRecipes = applyFilter ? filterRecipesByNameAndTags(recipes, inputText) : recipes;
 //     renderRecipesGrid(filteredRecipes);
 //     initializeFilters(filteredRecipes);
 //     toggleClearIcon(icon, inputText.trim() !== '');
@@ -92,6 +98,10 @@ function toggleClearIcon(icon, condition) {
 function handleInputChange(inputText, icon, recipes) {
     if (inputText.length >= 3) {
         const filteredRecipes = filterRecipesByName(recipes, inputText);
+
+        console.log('Recipes:', recipes);
+        console.log('Filtered recipes:', filteredRecipes);
+
         renderRecipesGrid(filteredRecipes);
         initializeFilters(filteredRecipes);
         toggleClearIcon(icon, inputText.trim() !== ''); 
@@ -115,13 +125,20 @@ function handleClearIcon(searchInput, clearIcon, recipes) {
 async function initializeApp() {
     try {
         const recipes = await fetchRecipesData(); // Fetching recipes data
+
         renderRecipesGrid(recipes); // Initial rendering of recipes grid
         initializeFilters(recipes); // Initial setup of filters
 
         const mainSearchInput = document.getElementById('mainSearchInput'); // Getting search input element
         const clearIcon = document.querySelector('.clear-icon'); // Getting clear icon element
 
-        mainSearchInput.addEventListener('input', () => handleInputChange(mainSearchInput.value, clearIcon, recipes));
+        // mainSearchInput.addEventListener('input', () => handleInputChange(mainSearchInput.value, clearIcon, recipes));
+
+        mainSearchInput.addEventListener('input', () => {
+            handleInputChange(mainSearchInput.value, clearIcon, recipes)
+        });
+
+
         clearIcon.addEventListener('click', () => handleClearIcon(mainSearchInput, clearIcon, recipes));
 
     } catch (error) {

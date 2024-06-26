@@ -630,6 +630,9 @@ video {
 .p-3 {
   padding: 0.75rem;
 }
+.p-4 {
+  padding: 1rem;
+}
 .px-0 {
   padding-left: 0px;
   padding-right: 0px;
@@ -1050,6 +1053,8 @@ main {
 .recipe-card {
   width: 100%;
   padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -1099,8 +1104,8 @@ main {
 }
 
 .recipe-description {
-  --tw-text-opacity: 1;
-  color: rgb(29 78 216 / var(--tw-text-opacity));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 @media (min-width: 640px) {
