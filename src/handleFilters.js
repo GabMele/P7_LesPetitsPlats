@@ -4,7 +4,10 @@ import { filterRecipesByTags } from './handleRecipesSearch.js';
 import { renderRecipesGrid }from './home.js';
 
 export function initializeFilters(recipes) {
-    const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
+    //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
+
+    const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
+
     const filters = initializeFilterSets(dropdowns);
 
     populateFilters(recipes, filters);
@@ -27,38 +30,71 @@ function initializeFilterSets(dropdowns) {
 // in this case, only the firtst occurence will be added keeping
 // the original case.
 // To achieve this, we will use a Set object
+// function populateFilters(recipes, filters) {
+//     const uniqueIngredients = new Set();
+//     const uniqueAppliances = new Set();
+//     const uniqueustensils = new Set();
+
+//     recipes.forEach(recipe => {
+//         recipe.ingredients.forEach(ingredient => {
+//             const ingredientName = ingredient.ingredient;
+//             const lowerIngredientName = ingredientName.toLowerCase();
+//             if (!uniqueIngredients.has(lowerIngredientName)) {
+//                 filters['ingredients-filter'].add(ingredientName); // Add to set in filters object
+//                 uniqueIngredients.add(lowerIngredientName);
+//             }
+//         });
+
+//         const applianceName = recipe.appliance;
+//         const lowerApplianceName = applianceName.toLowerCase();
+//         if (!uniqueAppliances.has(lowerApplianceName)) {
+//             filters['appliance-filter'].add(applianceName); // Add to set in filters object
+//             uniqueAppliances.add(lowerApplianceName);
+//         }
+
+//         recipe.ustensils.forEach(ustensil => {
+//             const ustensilName = ustensil;
+//             const lowerUstensilName = ustensilName.toLowerCase();
+//             if (!uniqueustensils.has(lowerUstensilName)) {
+//                 filters['ustensils-filter'].add(ustensilName); // Add to set in filters object
+//                 uniqueustensils.add(lowerUstensilName);
+//             }
+//         });
+//     });
+// }
+
+
+
 function populateFilters(recipes, filters) {
+    const addToFilterSet = (filterKey, item, set) => {
+        const lowerItem = item.toLowerCase();
+        if (!set.has(lowerItem)) {
+            filters[filterKey].add(item);
+            set.add(lowerItem);
+        }
+    };
+
     const uniqueIngredients = new Set();
     const uniqueAppliances = new Set();
-    const uniqueustensils = new Set();
+    const uniqueUstensils = new Set();
 
     recipes.forEach(recipe => {
         recipe.ingredients.forEach(ingredient => {
-            const ingredientName = ingredient.ingredient;
-            const lowerIngredientName = ingredientName.toLowerCase();
-            if (!uniqueIngredients.has(lowerIngredientName)) {
-                filters['ingredients-filter'].add(ingredientName); // Add to set in filters object
-                uniqueIngredients.add(lowerIngredientName);
-            }
+            addToFilterSet('ingredients-filter', ingredient.ingredient, uniqueIngredients);
         });
 
-        const applianceName = recipe.appliance;
-        const lowerApplianceName = applianceName.toLowerCase();
-        if (!uniqueAppliances.has(lowerApplianceName)) {
-            filters['appliance-filter'].add(applianceName); // Add to set in filters object
-            uniqueAppliances.add(lowerApplianceName);
-        }
+        addToFilterSet('appliance-filter', recipe.appliance, uniqueAppliances);
 
         recipe.ustensils.forEach(ustensil => {
-            const ustensilName = ustensil;
-            const lowerUstensilName = ustensilName.toLowerCase();
-            if (!uniqueustensils.has(lowerUstensilName)) {
-                filters['ustensils-filter'].add(ustensilName); // Add to set in filters object
-                uniqueustensils.add(lowerUstensilName);
-            }
+            addToFilterSet('ustensils-filter', ustensil, uniqueUstensils);
         });
     });
 }
+
+
+
+
+
 
 
 function initializeDropdowns(dropdowns, filters, recipes) {
@@ -244,14 +280,15 @@ function setupDropdownItemSelection(itemsList, dropdown, recipes) {
 
     itemsList.addEventListener('click', (e) => {
 
-        console.log("setupDropdownItemSelection : e.target ", e.target)
-        console.log(`setupDropdownItemSelection : e.target.matches('.dropdown-item') ${e.target.matches('.dropdown-item')}`);
+        // console.log("setupDropdownItemSelection : e.target ", e.target)
+        // console.log(`setupDropdownItemSelection : e.target.matches('.dropdown-item') ${e.target.matches('.dropdown-item')}`);
 
         // console.log("setupDropdownItemSelection : ", e.target, e.target.matches('.dropdown-item'));
 
         if (e.target && e.target.matches('.dropdown-item')) {
             handleItemClick(e.target, itemsList, dropdown, recipes);
         }
+        
     });
 
 }
@@ -259,45 +296,74 @@ function setupDropdownItemSelection(itemsList, dropdown, recipes) {
 
 
 function handleItemClick(target, itemsList, dropdown, recipes) {
-
     const selectedItem = target.textContent.trim();
     const selectedTagsDiv = dropdown.querySelector('.filter-selected');
     const existingTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
                                 .map(span => span.textContent.trim());
 
+    console.log("existingTags in this category:", existingTags);
+
     if (!existingTags.includes(selectedItem)) {
-        const newTagWrapper = createTag(selectedItem, itemsList);
-        selectedTagsDiv.appendChild(newTagWrapper);
-        selectedTagsDiv.style.display = 'flex';
-        dropdown.querySelector('.dropdown-content').style.display = 'none';
+        addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
+        hideDropdownContent(dropdown);
 
-        const tagsCategory = dropdown.id.split('-')[0];
-        console.log("Tags category:", tagsCategory);
-
-        // Initialize updatedTags if not already defined
-        var updatedTags = {};
-
-        updatedTags[tagsCategory] = existingTags;
-
-        updatedTags[tagsCategory].push(selectedItem);
+        const allExistingTags = getAllExistingTags();
+        console.log("allExistingTags:", allExistingTags);
 
         console.log("BEFORE CALL filterRecipesByTags");
-        console.log("------ updatedTags:", updatedTags);
+        console.log("------ allExistingTags:", allExistingTags);
 
+        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
 
-        const filteredRecipes = filterRecipesByTags(recipes, updatedTags);
+        console.log("filteredRecipes:", filteredRecipes);
 
-        console.log("filteredRecipes :", filteredRecipes);
-
-        renderRecipesGrid(filteredRecipes);
-        initializeFilters(filteredRecipes);
+        updateUI(filteredRecipes);
     } else {
         console.log("Item was already selected:", selectedItem);
     }
 }
 
+function addTag(selectedItem, selectedTagsDiv, itemsList, recipes) {
+    const newTagWrapper = createTag(selectedItem, itemsList, recipes);
+    selectedTagsDiv.appendChild(newTagWrapper);
+    selectedTagsDiv.style.display = 'flex';
+}
 
-function createTag(item, itemsList) {
+function hideDropdownContent(dropdown) {
+    dropdown.querySelector('.dropdown-content').style.display = 'none';
+}
+
+function getAllExistingTags() {
+    const allDropdowns = document.querySelectorAll('.dropdown');
+    let allTags = {};
+
+    allDropdowns.forEach(dropdown => {
+        const tagsCategory = getTagsCategory(dropdown);
+        const selectedTagsDiv = dropdown.querySelector('.filter-selected');
+        const existingTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
+                                    .map(span => span.textContent.trim());
+
+        if (existingTags.length > 0) {
+            allTags[tagsCategory] = existingTags;
+        }
+    });
+
+    return allTags;
+}
+
+function getTagsCategory(dropdown) {
+    return dropdown.id.split('-')[0];
+}
+
+function updateUI(filteredRecipes) {
+    renderRecipesGrid(filteredRecipes);
+    initializeFilters(filteredRecipes);
+}
+
+
+
+
+function createTag(item, itemsList, recipes) {
     const newTagWrapper = document.createElement('div');
     newTagWrapper.classList.add('tag-wrapper');
 
@@ -305,7 +371,7 @@ function createTag(item, itemsList) {
     newTagContent.textContent = item;
     newTagContent.classList.add('tag-content');
 
-    const closeButton = createCloseButton(newTagWrapper, itemsList);
+    const closeButton = createCloseButton(newTagWrapper, itemsList, recipes);
 
     newTagWrapper.appendChild(newTagContent);
     newTagWrapper.appendChild(closeButton);
@@ -314,27 +380,19 @@ function createTag(item, itemsList) {
     return newTagWrapper;
 }
 
-function createCloseButton(tagWrapper, itemsList) {
+function createCloseButton(tagWrapper, itemsList, recipes) {
     const closeButton = document.createElement('span');
     closeButton.textContent = '✕';
     closeButton.classList.add('remove-tag');
 
     closeButton.addEventListener('click', () => {
-        // console.log("----- closeButton ---- ");
-        // console.log("tagWrapper:", tagWrapper);
-        // console.log("itemsList:", itemsList);
-
         const itemToAdd = tagWrapper.querySelector('.tag-content').textContent.trim();
-
-        //console.log("itemToAdd:", itemToAdd);
-        
-        // Remove the tagWrapper element from the DOM
         tagWrapper.remove();
-
-        // Remove the corresponding item from the list
         addItemToList(itemToAdd, itemsList);
-        
-        
+
+        const allExistingTags = getAllExistingTags();
+        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
+        updateUI(filteredRecipes);
     });
 
     return closeButton;
@@ -365,29 +423,3 @@ function addItemToList(itemToAdd, itemsList) {
 }
 
 
-
-
-
-
-
-
-
-// function createTag(item) {
-//     const newTagWrapper = document.createElement('div');
-//     newTagWrapper.classList.add('tag-wrapper');
-//     const newTagContent = document.createElement('span');
-//     newTagContent.textContent = item;
-//     newTagContent.classList.add('tag-content');
-
-//     const closeButton = document.createElement('span');
-//     closeButton.textContent = '✕';
-//     closeButton.classList.add('remove-tag');
-//     closeButton.addEventListener('click', function() {
-//         newTagWrapper.remove();
-//     });
-
-//     newTagWrapper.appendChild(newTagContent);
-//     newTagWrapper.appendChild(closeButton);
-
-//     return newTagWrapper;
-// }
