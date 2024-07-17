@@ -95,17 +95,55 @@ function toggleClearIcon(icon, condition) {
 // }
 
 
+// function handleInputChange(inputText, icon, recipes) {
+//     if (inputText.length >= 3) {
+//         const filteredRecipes = filterRecipesByName(recipes, inputText);
+
+//         console.log('Recipes:', recipes);
+//         console.log('Filtered recipes:', filteredRecipes);
+
+//         renderRecipesGrid(filteredRecipes);
+//         initializeFilters(filteredRecipes);
+//         toggleClearIcon(icon, inputText.trim() !== ''); 
+//     }
+// }
+
+
+
+// function handleInputChange(inputText, icon, recipes) {
+//     let filteredRecipes;
+
+//     // Early return for empty input
+//     if (inputText.length === 0) {
+//         filteredRecipes = recipes;
+//         toggleClearIcon(icon, false); // Hide icon when input is empty
+//     } else if (inputText.length >= 3) {
+//         filteredRecipes = filterRecipesByName(recipes, inputText);
+//     }
+
+//     // Common operations after filtering
+//     //if (filteredRecipes) {
+//         console.log('Recipes:', recipes);
+//         console.log('Filtered recipes:', filteredRecipes);
+
+//         renderRecipesGrid(filteredRecipes);
+//         initializeFilters(filteredRecipes);
+//         toggleClearIcon(icon, inputText.trim() !== ''); // Show icon if input is not just whitespace
+//     //}
+// }
+
+
 function handleInputChange(inputText, icon, recipes) {
-    if (inputText.length >= 3) {
-        const filteredRecipes = filterRecipesByName(recipes, inputText);
+    const trimmedInput = inputText.trim();
+    const shouldShowClearIcon = trimmedInput.length > 0;
 
-        console.log('Recipes:', recipes);
-        console.log('Filtered recipes:', filteredRecipes);
+    toggleClearIcon(icon, shouldShowClearIcon); // Toggle icon visibility based on input presence != 0
 
-        renderRecipesGrid(filteredRecipes);
-        initializeFilters(filteredRecipes);
-        toggleClearIcon(icon, inputText.trim() !== ''); 
-    }
+    let filteredRecipes = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
+
+    // Render and initialize with the filtered recipes
+    renderRecipesGrid(filteredRecipes);
+    initializeFilters(filteredRecipes);
 }
 
 

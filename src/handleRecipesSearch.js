@@ -96,9 +96,9 @@ export function filterRecipesByTags(recipes, tags) {
 
         for (let key in tags) {
 
-            console.log("key : ", key);
-            console.log("tags[key] : ", tags[key]);
-            console.log("recipes[i].key : ", recipes[i][key]);
+            // console.log("key : ", key);
+            // console.log("tags[key] : ", tags[key]);
+            // console.log("recipes[i].key : ", recipes[i][key]);
 
             console.log("LOOP key ----> ", key);
 
@@ -108,17 +108,17 @@ export function filterRecipesByTags(recipes, tags) {
 
                     for (let j = 0; j < tags[key].length; j++) {
 
-                        console.log("tags[key][j] : ", tags[key][j]);
+                        // console.log("-- tags[key][j] : ", tags[key][j]);
 
                         let found = false;
                         for (let k = 0; k < recipes[i].ingredients.length && !found; k++) {
 
-                            console.log("recipes[i].ingredients[k].ingredient : ", recipes[i].ingredients[k].ingredient);
+                            // console.log("recipes[i].ingredients[k].ingredient : ", recipes[i].ingredients[k].ingredient);
 
                             if (tags[key][j].toLowerCase() === recipes[i].ingredients[k].ingredient.toLowerCase()) {
                                 found = true;
 
-                                console.log("FOUND !!!! ", found);
+                                console.log("-- -- Ingredient FOUND ! ", found);
 
                                 break;
                             }
@@ -128,7 +128,7 @@ export function filterRecipesByTags(recipes, tags) {
                             break;
                         }
 
-                        console.log("match : ", match);
+                        console.log("-- match : ", match);
                     }
                     break;
                 case 'ustensils':
