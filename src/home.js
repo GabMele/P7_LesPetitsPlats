@@ -5,6 +5,13 @@ import { DATA_JSON_PATH, RECIPES_IMAGES_PATH } from '../constants.js';
 import { initializeFilters } from './handleFilters.js';
 import { filterRecipesByName } from './handleRecipesSearch.js';
 
+export let currentFilteredRecipes = [];
+
+export function setCurrentFilteredRecipes(recipes) {
+    currentFilteredRecipes = recipes;
+}
+
+
 async function fetchRecipesData() {
     try {
         const { recipes } = await fetchData(DATA_JSON_PATH);
@@ -75,18 +82,29 @@ function toggleClearIcon(clearIcon, condition) {
     clearIcon.style.display = condition ? 'inline' : 'none';
 }
 
+
+function clearTags() {
+    document.querySelectorAll('.tag-wrapper').forEach(function(element) {
+        element.remove();
+    });
+}
+
+
 function updateRecipesDisplay(recipes, shouldShowClearIcon, clearIcon) {
     renderRecipesGrid(recipes);
     initializeFilters(recipes);
+    clearTags();
     toggleClearIcon(clearIcon, shouldShowClearIcon);
 }
 
 function handleInputChange(inputText, clearIcon, recipes) {
-    const trimmedInput = inputText.trim();
+    const trimmedInput = inputText.trimStart();
     const shouldShowClearIcon = trimmedInput.length > 0;
-    const filteredRecipes = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
 
-    updateRecipesDisplay(filteredRecipes, shouldShowClearIcon, clearIcon);
+
+    currentFilteredRecipes  = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
+
+    updateRecipesDisplay(currentFilteredRecipes, shouldShowClearIcon, clearIcon);
 }
 
 function handleClearIcon(searchInput, clearIcon, recipes) {
@@ -94,9 +112,13 @@ function handleClearIcon(searchInput, clearIcon, recipes) {
     updateRecipesDisplay(recipes, false, clearIcon);
 }
 
+
+
 async function initializeApp() {
     try {
         const recipes = await fetchRecipesData();
+
+        currentFilteredRecipes = recipes;
 
         updateRecipesDisplay(recipes, false, document.querySelector('.clear-icon'));
 

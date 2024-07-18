@@ -2,17 +2,19 @@
 
 import { filterRecipesByTags } from './handleRecipesSearch.js';
 import { renderRecipesGrid }from './home.js';
+import { currentFilteredRecipes } from './home.js';
 
-export function initializeFilters(recipes) {
+
+export function initializeFilters(currentFilteredRecipes) {
     //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
 
     const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
 
     const filters = initializeFilterSets(dropdowns);
 
-    populateFilters(recipes, filters);
+    populateFilters(currentFilteredRecipes, filters);
 
-    initializeDropdowns(dropdowns, filters, recipes);
+    initializeDropdowns(dropdowns, filters, currentFilteredRecipes);
 
     console.log("initialized Dropdowns DONE : ", dropdowns);
 
@@ -30,40 +32,6 @@ function initializeFilterSets(dropdowns) {
 // in this case, only the firtst occurence will be added keeping
 // the original case.
 // To achieve this, we will use a Set object
-// function populateFilters(recipes, filters) {
-//     const uniqueIngredients = new Set();
-//     const uniqueAppliances = new Set();
-//     const uniqueustensils = new Set();
-
-//     recipes.forEach(recipe => {
-//         recipe.ingredients.forEach(ingredient => {
-//             const ingredientName = ingredient.ingredient;
-//             const lowerIngredientName = ingredientName.toLowerCase();
-//             if (!uniqueIngredients.has(lowerIngredientName)) {
-//                 filters['ingredients-filter'].add(ingredientName); // Add to set in filters object
-//                 uniqueIngredients.add(lowerIngredientName);
-//             }
-//         });
-
-//         const applianceName = recipe.appliance;
-//         const lowerApplianceName = applianceName.toLowerCase();
-//         if (!uniqueAppliances.has(lowerApplianceName)) {
-//             filters['appliance-filter'].add(applianceName); // Add to set in filters object
-//             uniqueAppliances.add(lowerApplianceName);
-//         }
-
-//         recipe.ustensils.forEach(ustensil => {
-//             const ustensilName = ustensil;
-//             const lowerUstensilName = ustensilName.toLowerCase();
-//             if (!uniqueustensils.has(lowerUstensilName)) {
-//                 filters['ustensils-filter'].add(ustensilName); // Add to set in filters object
-//                 uniqueustensils.add(lowerUstensilName);
-//             }
-//         });
-//     });
-// }
-
-
 
 function populateFilters(recipes, filters) {
     const addToFilterSet = (filterKey, item, set) => {
@@ -153,10 +121,10 @@ function hideDropdownOnBlur(dropdown, searchInput) {
     searchInput.addEventListener('blur', function() {
 
 
-        console.log('*****************************');
-        console.log('******* Blur event triggered ******');
-        console.log("**** dropdown:", dropdown);
-        console.log("**** searchInput:", searchInput.value);
+        // console.log('*****************************');
+        // console.log('******* Blur event triggered ******');
+        // console.log("**** dropdown:", dropdown);
+        // console.log("**** searchInput:", searchInput.value);
         // console.log(dropdown);
         setTimeout(() => {
             dropdown.querySelector('.dropdown-content').style.display = 'none';
@@ -178,99 +146,6 @@ function setupSearchFilter(searchInput, itemsList) {
 }
 
 
-// function setupDropdownItemSelection(itemsList, dropdown) {
-//     // console.log('Setting up item selection');
-//     // console.log("itemsList:", itemsList);
-//     // console.log("dropdown:", dropdown);
-
-//     itemsList.addEventListener('click', function(e) {
-//         console.log("e.target:", e.target);
-//         if (e.target && e.target.matches('.dropdown-item')) {
-//             const selectedItem = e.target.textContent;
-
-//             const selectedTagsDiv = dropdown.querySelector('.filter-selected');
-//             const existingItems = new Set(Array.from(selectedTagsDiv.querySelectorAll('span'))
-//                 .map(span => span.textContent));
-
-//             if (!existingItems.has(selectedItem)) {
-//                 const newTagWrapper = document.createElement('span');
-//                 newTagWrapper.textContent = selectedItem;
-
-//                 selectedTagsDiv.appendChild(newTagWrapper);
-//                 selectedTagsDiv.style.display = 'flex';
-//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
-//             } else {
-//                 //console.log("Item already selected:", selectedItem);
-//             }
-//         }
-//     });
-// }
-
-
-
-// function setupDropdownItemSelection(itemsList, dropdown) {
-//     let items = Array.from(itemsList.children);
-//     itemsList.addEventListener('click', function(e) {
-//         if (e.target && e.target.matches('.dropdown-item')) {
-//             const selectedItem = e.target.textContent.trim();
-//             const selectedIndex = items.indexOf(e.target);
-
-//             const selectedTagsDiv = dropdown.querySelector('.filter-selected');
-//             const existingItems = new Set(Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
-//                 .map(span => span.textContent.trim()));
-
-//             if (!existingItems.has(selectedItem)) {
-//                 const newTagWrapper = createTag(selectedItem, selectedIndex, itemsList, dropdown);
-
-//                 selectedTagsDiv.appendChild(newTagWrapper);
-//                 selectedTagsDiv.style.display = 'flex';
-//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
-//             } else {
-//                 console.log("Item already selected:", selectedItem);
-//             }
-//         }
-//     });
-// }
-
-
-
-
-// function createTag(item, index, dropdown) {
-
-//     console.log("createTag : ", item, index);
-
-//     const newTagWrapper = document.createElement('div');
-//     newTagWrapper.classList.add('tag-wrapper');
-//     const newTagContent = document.createElement('span');
-//     newTagContent.textContent = item;
-//     newTagContent.classList.add('tag-content');
-
-//     const closeButton = document.createElement('span');
-//     closeButton.textContent = '✕';
-//     closeButton.classList.add('remove-tag');
-//     closeButton.addEventListener('click', function() {
-//         // Remove the tag wrapper from the selectedTagsDiv
-//         newTagWrapper.remove();
-
-//         console.log("dropdown :", dropdown);
-//         console.log("dropdown.children :", dropdown.children);
-//         console.log("itemsList :", itemsList);
-//         console.log("itemsList.children :", itemsList.children);
-//         console.log("index :", index);
-//         const itemToRemove = itemsList.querySelector(`.dropdown-item:nth-child(${index + 1})`);
-
-//         console.log("itemToRemove :", itemToRemove);
-
-//         if (itemToRemove) {
-//             itemsList.removeChild(itemToRemove);
-//         }
-//     });
-
-//     newTagWrapper.appendChild(newTagContent);
-//     newTagWrapper.appendChild(closeButton);
-
-//     return newTagWrapper;
-// }
 
 
 function setupDropdownItemSelection(itemsList, dropdown, recipes) {
@@ -302,6 +177,7 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
                                 .map(span => span.textContent.trim());
 
     console.log("existingTags in this category:", existingTags);
+    console.log("recipes:", recipes);
 
     if (!existingTags.includes(selectedItem)) {
         addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
@@ -313,13 +189,13 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
         console.log("BEFORE CALL filterRecipesByTags");
         console.log("------ allExistingTags:", allExistingTags);
 
-        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
+        const filteredRecipes = filterRecipesByTags(currentFilteredRecipes, allExistingTags);
 
         console.log("filteredRecipes:", filteredRecipes);
 
         updateUI(filteredRecipes);
     } else {
-        console.log("Item was already selected:", selectedItem);
+        // console.log("Item was already selected:", selectedItem);
     }
 }
 
@@ -391,7 +267,7 @@ function createCloseButton(tagWrapper, itemsList, recipes) {
         addItemToList(itemToAdd, itemsList);
 
         const allExistingTags = getAllExistingTags();
-        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
+        const filteredRecipes = filterRecipesByTags(currentFilteredRecipes, allExistingTags);
         updateUI(filteredRecipes);
     });
 
