@@ -76,6 +76,7 @@ export function renderRecipesGrid(recipes) {
     const grid = document.querySelector('.recipes-grid');
     grid.innerHTML = '';
     recipes.forEach(recipe => grid.appendChild(createRecipeCard(recipe)));
+    document.querySelector(".recipes-counter").textContent = recipes.length + " recettes";
 }
 
 function toggleClearIcon(clearIcon, condition) {
@@ -90,26 +91,37 @@ function clearTags() {
 }
 
 
-function updateRecipesDisplay(recipes, shouldShowClearIcon, clearIcon) {
+function regeneratePageAndClearTags(recipes, shouldShowClearIcon, clearIcon) {
     renderRecipesGrid(recipes);
     initializeFilters(recipes);
     clearTags();
     toggleClearIcon(clearIcon, shouldShowClearIcon);
 }
 
+
 function handleInputChange(inputText, clearIcon, recipes) {
+    // Trim start of the input text
     const trimmedInput = inputText.trimStart();
-    const shouldShowClearIcon = trimmedInput.length > 0;
-
-
-    currentFilteredRecipes  = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
-
-    updateRecipesDisplay(currentFilteredRecipes, shouldShowClearIcon, clearIcon);
+    
+    // Filter out non-letter characters
+    const letterOnlyInput = trimmedInput.replace(/[^a-zA-Z]/g, '');
+    
+    // Determine whether to show the clear icon
+    const shouldShowClearIcon = letterOnlyInput.length > 0;
+    
+    // Filter recipes based on the letter-only input
+    const currentFilteredRecipes = letterOnlyInput.length >= 3 ? filterRecipesByName(recipes, letterOnlyInput) : recipes;
+    
+    // Update the recipes display
+    regeneratePageAndClearTags(currentFilteredRecipes, shouldShowClearIcon, clearIcon);
 }
+
+
+
 
 function handleClearIcon(searchInput, clearIcon, recipes) {
     searchInput.value = '';
-    updateRecipesDisplay(recipes, false, clearIcon);
+    regeneratePageAndClearTags(recipes, false, clearIcon);
 }
 
 
@@ -120,7 +132,7 @@ async function initializeApp() {
 
         currentFilteredRecipes = recipes;
 
-        updateRecipesDisplay(recipes, false, document.querySelector('.clear-icon'));
+        regeneratePageAndClearTags(recipes, false, document.querySelector('.clear-icon'));
 
         const mainSearchInput = document.getElementById('mainSearchInput');
         const clearIcon = document.querySelector('.clear-icon');

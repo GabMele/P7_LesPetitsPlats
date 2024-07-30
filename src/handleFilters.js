@@ -193,7 +193,7 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
 
         console.log("filteredRecipes:", filteredRecipes);
 
-        updateUI(filteredRecipes);
+        regeneratePageKeepingTagsUntouched(filteredRecipes);
     } else {
         // console.log("Item was already selected:", selectedItem);
     }
@@ -231,7 +231,7 @@ function getTagsCategory(dropdown) {
     return dropdown.id.split('-')[0];
 }
 
-function updateUI(filteredRecipes) {
+function regeneratePageKeepingTagsUntouched(filteredRecipes) {
     renderRecipesGrid(filteredRecipes);
     initializeFilters(filteredRecipes);
 }
@@ -268,7 +268,7 @@ function createCloseButton(tagWrapper, itemsList, recipes) {
 
         const allExistingTags = getAllExistingTags();
         const filteredRecipes = filterRecipesByTags(currentFilteredRecipes, allExistingTags);
-        updateUI(filteredRecipes);
+        regeneratePageKeepingTagsUntouched(filteredRecipes);
     });
 
     return closeButton;
