@@ -115,11 +115,12 @@ main {
 }
 
 .filters {
-  @apply flex grow items-start gap-6;
+  @apply flex grow items-start ;
+  gap: 5%;
 }
 
 .recipes-counter {
-  @apply p-3 text-lg;
+  @apply p-3 whitespace-nowrap text-lg font-bold;
 }
 
 .dropdown {
@@ -127,7 +128,8 @@ main {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 30%;
+  max-width: 200px;
   /* z-index: 1; */
 }
 
@@ -137,6 +139,11 @@ main {
     /*cursor: pointer;*/
     text-align: left;
     background-color: var(--bg-white);
+}
+
+.dropdown i {
+  margin-left: auto;
+  padding: 1rem;
 }
 
 
@@ -264,7 +271,7 @@ main {
 }
 
 .recipe-description {
-  @apply text-sm l;
+  @apply text-sm;
   line-height: 0.7rem;
 }
 

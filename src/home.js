@@ -5,10 +5,10 @@ import { DATA_JSON_PATH, RECIPES_IMAGES_PATH } from '../constants.js';
 import { initializeFilters } from './handleFilters.js';
 import { filterRecipesByName } from './handleRecipesSearch.js';
 
-export let currentFilteredRecipes = [];
+export let recipesFilteredByName = [];
 
-export function setCurrentFilteredRecipes(recipes) {
-    currentFilteredRecipes = recipes;
+export function setrecipesFilteredByName(recipes) {
+    recipesFilteredByName = recipes;
 }
 
 
@@ -103,17 +103,14 @@ function handleInputChange(inputText, clearIcon, recipes) {
     // Trim start of the input text
     const trimmedInput = inputText.trimStart();
     
-    // Filter out non-letter characters
-    const letterOnlyInput = trimmedInput.replace(/[^a-zA-Z]/g, '');
-    
     // Determine whether to show the clear icon
-    const shouldShowClearIcon = letterOnlyInput.length > 0;
+    const shouldShowClearIcon = trimmedInput.length > 0;
     
     // Filter recipes based on the letter-only input
-    const currentFilteredRecipes = letterOnlyInput.length >= 3 ? filterRecipesByName(recipes, letterOnlyInput) : recipes;
+    recipesFilteredByName = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
     
     // Update the recipes display
-    regeneratePageAndClearTags(currentFilteredRecipes, shouldShowClearIcon, clearIcon);
+    regeneratePageAndClearTags(recipesFilteredByName, shouldShowClearIcon, clearIcon);
 }
 
 
@@ -130,7 +127,7 @@ async function initializeApp() {
     try {
         const recipes = await fetchRecipesData();
 
-        currentFilteredRecipes = recipes;
+        recipesFilteredByName = recipes;
 
         regeneratePageAndClearTags(recipes, false, document.querySelector('.clear-icon'));
 

@@ -2,19 +2,19 @@
 
 import { filterRecipesByTags } from './handleRecipesSearch.js';
 import { renderRecipesGrid }from './home.js';
-import { currentFilteredRecipes } from './home.js';
+import { recipesFilteredByName } from './home.js';
 
 
-export function initializeFilters(currentFilteredRecipes) {
+export function initializeFilters(recipes) {
     //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
 
     const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
 
     const filters = initializeFilterSets(dropdowns);
 
-    populateFilters(currentFilteredRecipes, filters);
+    populateFilters(recipes, filters);
 
-    initializeDropdowns(dropdowns, filters, currentFilteredRecipes);
+    initializeDropdowns(dropdowns, filters, recipes);
 
     console.log("initialized Dropdowns DONE : ", dropdowns);
 
@@ -183,17 +183,17 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
         addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
         hideDropdownContent(dropdown);
 
-        const allExistingTags = getAllExistingTags();
-        console.log("allExistingTags:", allExistingTags);
+        // const allExistingTags = getAllExistingTags();
+        // console.log("allExistingTags:", allExistingTags);
 
-        console.log("BEFORE CALL filterRecipesByTags");
-        console.log("------ allExistingTags:", allExistingTags);
+        // console.log("BEFORE CALL filterRecipesByTags");
+        // console.log("------ allExistingTags:", allExistingTags);
 
-        const filteredRecipes = filterRecipesByTags(currentFilteredRecipes, allExistingTags);
+        // const filteredRecipesByNameAndTags = filterRecipesByTags(recipesFilteredByName, allExistingTags);
 
-        console.log("filteredRecipes:", filteredRecipes);
+        // console.log("filteredRecipes:", filteredRecipesByNameAndTags);
 
-        regeneratePageKeepingTagsUntouched(filteredRecipes);
+        regeneratePageKeepingTagsUntouched();
     } else {
         // console.log("Item was already selected:", selectedItem);
     }
@@ -231,9 +231,13 @@ function getTagsCategory(dropdown) {
     return dropdown.id.split('-')[0];
 }
 
-function regeneratePageKeepingTagsUntouched(filteredRecipes) {
-    renderRecipesGrid(filteredRecipes);
-    initializeFilters(filteredRecipes);
+function regeneratePageKeepingTagsUntouched() {
+
+    const allExistingTags = getAllExistingTags();
+    const filteredRecipesByNameAndTags = filterRecipesByTags(recipesFilteredByName, allExistingTags);
+
+    renderRecipesGrid(filteredRecipesByNameAndTags);
+    initializeFilters(filteredRecipesByNameAndTags);
 }
 
 
@@ -256,7 +260,7 @@ function createTag(item, itemsList, recipes) {
     return newTagWrapper;
 }
 
-function createCloseButton(tagWrapper, itemsList, recipes) {
+function createCloseButton(tagWrapper, itemsList) {
     const closeButton = document.createElement('span');
     closeButton.textContent = '✕';
     closeButton.classList.add('remove-tag');
@@ -266,9 +270,9 @@ function createCloseButton(tagWrapper, itemsList, recipes) {
         tagWrapper.remove();
         addItemToList(itemToAdd, itemsList);
 
-        const allExistingTags = getAllExistingTags();
-        const filteredRecipes = filterRecipesByTags(currentFilteredRecipes, allExistingTags);
-        regeneratePageKeepingTagsUntouched(filteredRecipes);
+        // const allExistingTags = getAllExistingTags();
+        // const filteredRecipes = filterRecipesByTags(recipesFilteredByName, allExistingTags);
+        regeneratePageKeepingTagsUntouched();
     });
 
     return closeButton;

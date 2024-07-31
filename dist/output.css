@@ -581,6 +581,9 @@ video {
 .justify-center {
   justify-content: center;
 }
+.whitespace-nowrap {
+  white-space: nowrap;
+}
 .rounded-lg {
   border-radius: 0.5rem;
 }
@@ -682,6 +685,10 @@ video {
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
+}
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 .text-sm {
   font-size: 0.875rem;
@@ -887,13 +894,15 @@ main {
   display: flex;
   flex-grow: 1;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 5%;
 }
 
 .recipes-counter {
+  white-space: nowrap;
   padding: 0.75rem;
   font-size: 1.125rem;
   line-height: 1.75rem;
+  font-weight: 700;
 }
 
 .dropdown {
@@ -902,7 +911,8 @@ main {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 30%;
+  max-width: 200px;
   /* z-index: 1; */
 }
 
@@ -916,6 +926,11 @@ main {
     /*cursor: pointer;*/
     text-align: left;
     background-color: var(--bg-white);
+}
+
+.dropdown i {
+  margin-left: auto;
+  padding: 1rem;
 }
 
 
@@ -1105,7 +1120,7 @@ main {
 
 .recipe-description {
   font-size: 0.875rem;
-  line-height: 1.25rem;
+  line-height: 0.7rem;
 }
 
 @media (min-width: 640px) {

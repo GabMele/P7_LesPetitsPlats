@@ -1,32 +1,34 @@
 // handleRecipesSearch.js
 
 export function filterRecipesByTags(allRecipes, selectedTags) {
-    let matchingRecipes = [];
+    const matchingRecipes = [];
+    const tagCategories = Object.keys(selectedTags);
 
-    for (let i = 0; i < allRecipes.length; i++) {
-        let currentRecipe = allRecipes[i];
+    for (const recipe of allRecipes) {
         let recipeMatchesAllTags = true;
 
-        for (let tagCategory in selectedTags) {
-            if (!recipeMatchesAllTags) break;
+        for (const category of tagCategories) {
+            const tagValues = selectedTags[category];
 
-            for (let j = 0; j < selectedTags[tagCategory].length; j++) {
-                let currentTagValue = selectedTags[tagCategory][j].toLowerCase();
-                
-                if (!doesRecipeMatchTag(currentRecipe, tagCategory, currentTagValue)) {
+            for (const tagValue of tagValues) {
+                if (!doesRecipeMatchTag(recipe, category, tagValue.toLowerCase())) {
                     recipeMatchesAllTags = false;
                     break;
                 }
             }
+
+            if (!recipeMatchesAllTags) break;
+
         }
 
         if (recipeMatchesAllTags) {
-            matchingRecipes.push(currentRecipe);
+            matchingRecipes.push(recipe);
         }
     }
 
     return matchingRecipes;
 }
+
 
 function doesRecipeMatchTag(recipe, tagCategory, tagValue) {
     if (tagCategory === 'appliance') {
@@ -34,12 +36,14 @@ function doesRecipeMatchTag(recipe, tagCategory, tagValue) {
     }
 
     let categoryItems = recipe[tagCategory];
-    for (let k = 0; k < categoryItems.length; k++) {
-        let itemToCheck = tagCategory === 'ingredients' ? categoryItems[k].ingredient : categoryItems[k];
+
+    for (const item of categoryItems) {
+        let itemToCheck = tagCategory === 'ingredients' ? item.ingredient : item;
         if (itemToCheck.toLowerCase() === tagValue) {
             return true;
         }
     }
+
     return false;
 }
 
@@ -52,23 +56,20 @@ function containsSearchTerm(text, searchTerm) {
 export function filterRecipesByName(allRecipes, searchTerm) {
     let matchingRecipes = [];
 
-    for (let i = 0; i < allRecipes.length; i++) {
-        let recipe = allRecipes[i];
-        let recipeName = recipe.name;
-        let recipeDescription = recipe.description;
-        let recipeIngredients = recipe.ingredients;
+    for (const recipe of allRecipes) {
 
         // Check if recipeName or recipeDescription matches
-        if (containsSearchTerm(recipeName, searchTerm) || 
-            containsSearchTerm(recipeDescription, searchTerm)) {
+        if (containsSearchTerm(recipe.name, searchTerm) || 
+            containsSearchTerm(recipe.description, searchTerm)) {
             matchingRecipes.push(recipe);
             continue; // Move to next recipe
         }
 
         // Check if any ingredient matches
         let recipeMatch = false;
-        for (let j = 0; j < recipeIngredients.length; j++) {
-            if (containsSearchTerm(recipeIngredients[j].ingredient, searchTerm)) {
+
+        for (const ingredient of recipe.ingredients) {
+            if (containsSearchTerm(ingredient.ingredient, searchTerm)) {
                 recipeMatch = true;
                 break;
             }
