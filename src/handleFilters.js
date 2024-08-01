@@ -98,20 +98,46 @@ function populateDropdownItems(itemsList, filterSet) {
     });
 }
 
+
 function setupDropdownToggle(dropdown, searchInput) {
     const dropdownButton = dropdown.querySelector('.dropdown-button');
+
+    console.log("102 dropdownButton : ", dropdownButton);
+    console.log("102 dropdown : ", dropdown);
+
     dropdownButton.addEventListener('click', function() {
         const dropdownContent = dropdown.querySelector('.dropdown-content');
         const isVisible = dropdownContent.style.display === 'block';
         
         dropdownContent.style.display = isVisible ? 'none' : 'block';
         
-        if (!isVisible) {
-            searchInput.focus();
-        }
+        // if (!isVisible) {
+        //     searchInput.focus();
+        // }
     });
-    hideDropdownOnBlur(dropdown, searchInput);
+    // hideDropdownOnBlur(dropdown, searchInput);
 }
+
+
+
+// function setupDropdownToggle(dropdown, searchInput) {
+//     const dropdownButton = dropdown.querySelector('.dropdown-button');
+//     dropdownButton.addEventListener('click', function() {
+//         const dropdownContent = this.nextElementSibling;
+//         // dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+
+//         dropdownContent.style.display = 'block';
+
+//         searchInput.focus();
+//     });
+//     hideDropdownOnBlur(dropdown, searchInput);
+// }
+
+
+
+
+
+
 
 
 
@@ -171,7 +197,6 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
                                 .map(span => span.textContent.trim());
 
     console.log("existingTags in this category:", existingTags);
-    console.log("recipes:", recipes);
 
     if (!existingTags.includes(selectedItem)) {
         addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
@@ -179,9 +204,6 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
 
         // const allExistingTags = getAllExistingTags();
         // console.log("allExistingTags:", allExistingTags);
-
-        // console.log("BEFORE CALL filterRecipesByTags");
-        // console.log("------ allExistingTags:", allExistingTags);
 
         // const filteredRecipesByNameAndTags = filterRecipesByTags(recipesFilteredByName, allExistingTags);
 

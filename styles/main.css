@@ -150,7 +150,8 @@ h1, h2, h3 {
 
 
 .dropdown-content {
-  @apply hidden py-2 rounded-b-lg;
+  @apply py-2 rounded-b-lg;
+  display: none;
   background-color: var(--bg-white);
   margin-top: -4px;
 

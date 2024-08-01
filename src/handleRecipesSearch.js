@@ -30,14 +30,7 @@ const containsSearchTerm = (text, searchTerm) =>
   
   const ingredientMatches = (ingredients, searchTerm) =>
     ingredients.some(({ ingredient }) => containsSearchTerm(ingredient, searchTerm));
-  
-//   export const filterRecipesByName = (allRecipes, searchTerm) =>
-//     allRecipes.filter(
-//       ({ name, description, ingredients }) =>
-//         containsSearchTerm(name, searchTerm) ||
-//         containsSearchTerm(description, searchTerm) ||
-//         ingredientMatches(ingredients, searchTerm)
-//     );
+
 
 
 export function filterRecipesByName(allRecipes, searchTerm) {
