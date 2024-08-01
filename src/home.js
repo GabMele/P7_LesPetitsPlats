@@ -50,22 +50,29 @@ function createRecipeCard(recipe) {
     image.alt = recipe.name;
     card.appendChild(image);
 
-    const content = createElement('div', 'recipe-content');
-    const title = createElement('h2', 'recipe-title', recipe.name);
+    const content = createElement('div', 'recipe-card-content');
+    const title = createElement('h3', 'recipe-title', recipe.name);
     const info = createElement('p', 'recipe-info', `Servings: ${recipe.servings} | Time: ${recipe.time} mins`);
+    const descriptionTitle = createElement('h4', null, 'RECETTE');
     const description = createElement('p', 'recipe-description', recipe.description);
+    const ingredientsTitle = createElement('h4', null, 'INGREDIENTS');
     const ingredientsDiv = createElement('div', 'recipe-ingredients');
-    const ingredientsTitle = createElement('h3', null, 'Ingredients:');
+    const applianceTitle = createElement('h4', null, 'APPAREILS');
     const appliance = createElement('p', 'recipe-appliance', `Appliance: ${recipe.appliance}`);
+    const ustensilsTitle = createElement('h4', null, 'USTENSILS');
     const ustensils = createElement('p', 'recipe-ustensils', `Ustensils: ${recipe.ustensils.join(', ')}`);
 
     ingredientsDiv.appendChild(ingredientsTitle);
     ingredientsDiv.appendChild(createIngredientsList(recipe.ingredients));
     content.appendChild(title);
     content.appendChild(info);
+    content.appendChild(descriptionTitle);    
     content.appendChild(description);
+    content.appendChild(ingredientsTitle);
     content.appendChild(ingredientsDiv);
+    content.appendChild(applianceTitle);
     content.appendChild(appliance);
+    content.appendChild(ustensilsTitle);
     content.appendChild(ustensils);
     card.appendChild(content);
 

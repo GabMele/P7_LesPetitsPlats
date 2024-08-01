@@ -101,12 +101,14 @@ function populateDropdownItems(itemsList, filterSet) {
 function setupDropdownToggle(dropdown, searchInput) {
     const dropdownButton = dropdown.querySelector('.dropdown-button');
     dropdownButton.addEventListener('click', function() {
-        const dropdownContent = this.nextElementSibling;
-        // dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-
-        dropdownContent.style.display = 'block';
-
-        searchInput.focus();
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        const isVisible = dropdownContent.style.display === 'block';
+        
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+        
+        if (!isVisible) {
+            searchInput.focus();
+        }
     });
     hideDropdownOnBlur(dropdown, searchInput);
 }
@@ -114,18 +116,10 @@ function setupDropdownToggle(dropdown, searchInput) {
 
 
 function hideDropdownOnBlur(dropdown, searchInput) {
-    //console.log('----Setting up blur effect on : ', dropdown);
-    // console.log("---dropdown:", dropdown);
-    // console.log("---searchInput:", searchInput.value);
 
     searchInput.addEventListener('blur', function() {
 
 
-        // console.log('*****************************');
-        // console.log('******* Blur event triggered ******');
-        // console.log("**** dropdown:", dropdown);
-        // console.log("**** searchInput:", searchInput.value);
-        // console.log(dropdown);
         setTimeout(() => {
             dropdown.querySelector('.dropdown-content').style.display = 'none';
         }, 200); // delay to allow click event on dropdown items
@@ -139,7 +133,7 @@ function setupSearchFilter(searchInput, itemsList) {
         const filter = searchInput.value.toLowerCase();
         const items = itemsList.getElementsByClassName('dropdown-item');
         Array.from(items).forEach(item => {
-            const itemText = item.textContent || item.innerText;
+            const itemText = item.textContent
             item.style.display = itemText.toLowerCase().includes(filter) ? '' : 'none';
         });
     });
