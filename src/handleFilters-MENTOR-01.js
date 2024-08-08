@@ -5,10 +5,17 @@ import { renderRecipesGrid }from './home.js';
 import { recipesFilteredByName } from './home.js';
 
 
+console.log("START dropdowm SETUp handleFilters.js");
+const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
+dropdowns.forEach(dropdown => setupDropdownToggle(dropdown));
+console.log("END dropdowm SETUp handleFilters.js");
+
+
+
 export function initializeFilters(recipes) {
     //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
 
-    const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
+   
 
     const filters = initializeFilterSets(dropdowns);
 
@@ -67,15 +74,23 @@ function populateFilters(recipes, filters) {
 
 function initializeDropdowns(dropdowns, filters, recipes) {
     dropdowns.forEach(id => {
+        console.log("id => ", id)
         const dropdown = document.getElementById(id);
         const searchInput = dropdown.querySelector('.searchInput');
         const itemsList = dropdown.querySelector('.itemsList');
         itemsList.innerHTML = '';
 
+
+        // console.log("dropdown : ", dropdown);
+        // console.log("itemsList : ", itemsList);
+        // console.log("searchInput : ", searchInput);
+        // console.log("filters[id] : ", filters[id]);
+        // console.log("------------------");
+
         populateDropdownItems(itemsList, filters[id]);
-        addListenersOnDropdownsToDisplayDropdownList(dropdown, searchInput);
-        addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList);
-        addListenersOnDropdownItemsAndLaunchHandling(itemsList, dropdown, recipes);
+        
+        setupSearchFilter(searchInput, itemsList);
+        setupDropdownItemSelection(itemsList, dropdown, recipes);
     });
 }
 
@@ -92,49 +107,63 @@ function populateDropdownItems(itemsList, filterSet) {
 }
 
 
-
-function addListenersOnDropdownsToDisplayDropdownList(dropdown, searchInput) {
+function setupDropdownToggle(dropdownId) {
+    console.log("dropdown : ", dropdown);
+    var dropdown = document.getElementById(dropdownId);
     const dropdownButton = dropdown.querySelector('.dropdown-button');
-    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    console.log(dropdownButton);
+    function hideOrDisplayDropdownContent(event) {
+        event.preventDefault(); // Empêche le comportement par défaut du bouton
+        console.log("102 dropdown : ", dropdown);
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        const isVisible = dropdownContent.style.display === 'block';
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+    }
+    dropdownButton.removeEventListener('click', hideOrDisplayDropdownContent);
+    dropdownButton.addEventListener('click', hideOrDisplayDropdownContent);
 
-    dropdownButton.addEventListener('click', function(event) {
-        event.stopPropagation(); // Prevent event from bubbling upwards
+   
 
-        console.log("Dropdown ADDEVENTLISTENER click: ", dropdown.id);
-        // Open this dropdown
-        dropdownContent.style.display = 'block';
-
-
-
-        searchInput.focus();
-
-    });
-
-    hideDropdownContentOnInputBlur(dropdown);
+    // hideDropdownOnBlur(dropdown, searchInput);
 }
 
 
 
-function hideDropdownContentOnInputBlur(dropdown) {
-    const searchInput = dropdown.querySelector('.searchInput');
-    //const dropdownContent = dropdown.querySelector('.dropdown-content');
+// function setupDropdownToggle(dropdown, searchInput) {
+//     const dropdownButton = dropdown.querySelector('.dropdown-button');
+//     dropdownButton.addEventListener('click', function() {
+//         const dropdownContent = this.nextElementSibling;
+//         // dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+
+//         dropdownContent.style.display = 'block';
+
+//         searchInput.focus();
+//     });
+//     hideDropdownOnBlur(dropdown, searchInput);
+// }
+
+
+
+
+
+
+
+
+
+function hideDropdownOnBlur(dropdown, searchInput) {
 
     searchInput.addEventListener('blur', function() {
+
+
         setTimeout(() => {
-
-            //dropdownContent.style.display = 'none';
-            hideDropdownContent(dropdown);
-            //toggleDropdownContent(dropdown);
-
-
-            console.log("Dropdown closed: ", dropdown.id);
+            dropdown.querySelector('.dropdown-content').style.display = 'none';
         }, 200); // delay to allow click event on dropdown items
     });
 }
 
 
 
-function addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList) {
+function setupSearchFilter(searchInput, itemsList) {
     searchInput.addEventListener('input', function() {
         const filter = searchInput.value.toLowerCase();
         const items = itemsList.getElementsByClassName('dropdown-item');
@@ -148,17 +177,17 @@ function addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList
 
 
 
-function addListenersOnDropdownItemsAndLaunchHandling(itemsList, dropdown, recipes) {
+function setupDropdownItemSelection(itemsList, dropdown, recipes) {
     // const items = Array.from(itemsList.children)
     // .map(item => item.textContent.trim());
     ;
 
     itemsList.addEventListener('click', (e) => {
 
-        // console.log("addListenersOnDropdownItemsAndLaunchHandling : e.target ", e.target)
-        // console.log(`addListenersOnDropdownItemsAndLaunchHandling : e.target.matches('.dropdown-item') ${e.target.matches('.dropdown-item')}`);
+        console.log("setupDropdownItemSelection : e.target ", e.target)
+        console.log(`setupDropdownItemSelection : e.target.matches('.dropdown-item') ${e.target.matches('.dropdown-item')}`);
 
-        // console.log("addListenersOnDropdownItemsAndLaunchHandling : ", e.target, e.target.matches('.dropdown-item'));
+        // console.log("setupDropdownItemSelection : ", e.target, e.target.matches('.dropdown-item'));
 
         if (e.target && e.target.matches('.dropdown-item')) {
             handleItemClick(e.target, itemsList, dropdown, recipes);
@@ -180,10 +209,7 @@ function handleItemClick(target, itemsList, dropdown, recipes) {
 
     if (!existingTags.includes(selectedItem)) {
         addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
-        
         hideDropdownContent(dropdown);
-        //toggleDropdownContent(dropdown);
-
 
         // const allExistingTags = getAllExistingTags();
         // console.log("allExistingTags:", allExistingTags);
@@ -207,12 +233,6 @@ function addTag(selectedItem, selectedTagsDiv, itemsList, recipes) {
 function hideDropdownContent(dropdown) {
     dropdown.querySelector('.dropdown-content').style.display = 'none';
 }
-
-// function toggleDropdownContent(dropdown) {
-//     const dropdownContent = dropdown.querySelector('.dropdown-content');
-//     dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
-// }
-
 
 function getAllExistingTags() {
     const allDropdowns = document.querySelectorAll('.dropdown');
@@ -242,6 +262,7 @@ function regeneratePageKeepingTagsUntouched() {
     const filteredRecipesByNameAndTags = filterRecipesByTags(recipesFilteredByName, allExistingTags);
 
     renderRecipesGrid(filteredRecipesByNameAndTags);
+    console.log("filteredRecipesByNameAndTags:", filteredRecipesByNameAndTags);
     initializeFilters(filteredRecipesByNameAndTags);
 }
 
@@ -256,7 +277,7 @@ function createTag(item, itemsList, recipes) {
     newTagContent.textContent = item;
     newTagContent.classList.add('tag-content');
 
-    const closeButton = createCloseButtonAndHandleTagRemoval(newTagWrapper, itemsList);
+    const closeButton = createCloseButton(newTagWrapper, itemsList, recipes);
 
     newTagWrapper.appendChild(newTagContent);
     newTagWrapper.appendChild(closeButton);
@@ -265,7 +286,7 @@ function createTag(item, itemsList, recipes) {
     return newTagWrapper;
 }
 
-function createCloseButtonAndHandleTagRemoval(tagWrapper, itemsList) {
+function createCloseButton(tagWrapper, itemsList) {
     const closeButton = document.createElement('span');
     closeButton.textContent = '✕';
     closeButton.classList.add('remove-tag');
@@ -306,5 +327,3 @@ function addItemToList(itemToAdd, itemsList) {
     li.textContent = itemToAdd;
     itemsList.appendChild(li);
 }
-
-
