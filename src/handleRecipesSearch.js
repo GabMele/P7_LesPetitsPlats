@@ -1,66 +1,104 @@
 /**
- * Filters recipes based on selected tags from different categories.
- *
- * @param {Array<Object>} allRecipes - List of all available recipes.
- * @param {Object} selectedTags - Object with tag categories as keys (e.g., 'appliance', 'ingredients') 
- * and arrays of selected tag values.
- * @returns {Array<Object>} - List of recipes that match all selected tags.
+ * Version with NATIVE functions
+ * 
+ * Filters a list of recipes based on selected tags.
+ * @param {Object[]} allRecipes - The list of all recipe objects.
+ * @param {Object} selectedTags - An object where keys are tag categories and values are arrays of selected tags.
+ * @returns {Object[]} The filtered list of recipes that match all selected tags.
  */
 export function filterRecipesByTags(allRecipes, selectedTags) {
+    const matchingRecipes = [];
     const tagCategories = Object.keys(selectedTags);
 
-    return allRecipes.filter(recipe =>
-        tagCategories.every(category =>
-            selectedTags[category].every(tagValue =>
-                isRecipeMatchingTag(recipe, category, tagValue.toLowerCase())
-            )
-        )
-    );
+    for (const recipe of allRecipes) {
+        let recipeMatchesAllTags = true;
+
+        for (const category of tagCategories) {
+            const tagValues = selectedTags[category];
+
+            for (const tagValue of tagValues) {
+                if (!doesRecipeMatchTag(recipe, category, tagValue.toLowerCase())) {
+                    recipeMatchesAllTags = false;
+                    break;
+                }
+            }
+
+            if (!recipeMatchesAllTags) break;
+        }
+
+        if (recipeMatchesAllTags) {
+            matchingRecipes.push(recipe);
+        }
+    }
+
+    return matchingRecipes;
 }
 
 /**
- * Checks if a recipe matches a tag in a specific category.
- *
- * @param {Object} recipe - The recipe to check.
+ * Determines if a recipe matches a specific tag category and value.
+ * @param {Object} recipe - The recipe object to check.
  * @param {string} tagCategory - The category of the tag (e.g., 'appliance', 'ingredients').
- * @param {string} tagValue - The value of the tag to check.
- * @returns {boolean} - True if the recipe matches the tag, otherwise false.
+ * @param {string} tagValue - The value of the tag to match.
+ * @returns {boolean} True if the recipe matches the tag value for the given category, otherwise false.
  */
-function isRecipeMatchingTag(recipe, tagCategory, tagValue) {
+function doesRecipeMatchTag(recipe, tagCategory, tagValue) {
     if (tagCategory === 'appliance') {
         return recipe[tagCategory].toLowerCase() === tagValue;
     }
 
-    return recipe[tagCategory].some(item => {
+    const categoryItems = recipe[tagCategory];
+
+    for (const item of categoryItems) {
         const itemToCheck = tagCategory === 'ingredients' ? item.ingredient : item;
-        return itemToCheck.toLowerCase() === tagValue;
-    });
+        if (itemToCheck.toLowerCase() === tagValue) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
- * Checks if a text contains the search term, case-insensitively.
- *
- * @param {string} text - The text to check.
- * @param {string} searchTerm - The search term to find within the text.
- * @returns {boolean} - True if the text contains the search term, otherwise false.
+ * Checks if a text contains a search term, case-insensitive.
+ * @param {string} text - The text to search within.
+ * @param {string} searchTerm - The term to search for.
+ * @returns {boolean} True if the search term is found within the text, otherwise false.
  */
-const containsSearchTerm = (text, searchTerm) =>
-    text.toLowerCase().includes(searchTerm.toLowerCase());
+function containsSearchTerm(text, searchTerm) {
+    return text.toLowerCase().includes(searchTerm.toLowerCase());
+}
 
 /**
- * Filters recipes based on a search term that matches the recipe's name, description, or ingredients.
- *
- * @param {Array<Object>} allRecipes - List of all available recipes.
- * @param {string} searchTerm - The search term to filter recipes by name, description, or ingredients.
- * @returns {Array<Object>} - List of recipes that match the search term.
+ * Filters a list of recipes based on a search term in the name, description, or ingredients.
+ * @param {Object[]} allRecipes - The list of all recipe objects.
+ * @param {string} searchTerm - The search term to filter recipes by.
+ * @returns {Object[]} The filtered list of recipes that match the search term in name, description, or ingredients.
  */
 export function filterRecipesByName(allRecipes, searchTerm) {
-    return allRecipes.filter(recipe =>
-        containsSearchTerm(recipe.name, searchTerm) ||
-        containsSearchTerm(recipe.description, searchTerm) ||
-        recipe.ingredients.some(({ ingredient }) =>
-            containsSearchTerm(ingredient, searchTerm)
-        )
-    );
-}
+    const matchingRecipes = [];
 
+    for (const recipe of allRecipes) {
+        // Check if recipe name or description matches the search term
+        if (containsSearchTerm(recipe.name, searchTerm) || 
+            containsSearchTerm(recipe.description, searchTerm)) {
+            matchingRecipes.push(recipe);
+            continue; // Move to next recipe
+        }
+
+        // Check if any ingredient matches the search term
+        let recipeMatch = false;
+
+        for (const ingredient of recipe.ingredients) {
+            if (containsSearchTerm(ingredient.ingredient, searchTerm)) {
+                recipeMatch = true;
+                break;
+            }
+        }
+
+        if (recipeMatch) {
+            matchingRecipes.push(recipe);
+        }
+    }
+
+    return matchingRecipes;
+}
