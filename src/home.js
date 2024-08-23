@@ -5,13 +5,22 @@ import { DATA_JSON_PATH, RECIPES_IMAGES_PATH } from '../constants.js';
 import { initializeFilters } from './handleFilters.js';
 import { filterRecipesByName } from './handleRecipesSearch.js';
 
+/** @type {Array} */
 export let recipesFilteredByName = [];
 
+/**
+ * Sets the recipesFilteredByName array
+ * @param {Array} recipes - The filtered recipes array
+ */
 export function setrecipesFilteredByName(recipes) {
     recipesFilteredByName = recipes;
 }
 
-
+/**
+ * Fetches recipes data from the API
+ * @returns {Promise<Array>} The recipes data
+ * @throws {Error} If there's an error fetching the data
+ */
 async function fetchRecipesData() {
     try {
         const { recipes } = await fetchData(DATA_JSON_PATH);
@@ -22,6 +31,13 @@ async function fetchRecipesData() {
     }
 }
 
+/**
+ * Creates an HTML element
+ * @param {string} type - The type of element to create
+ * @param {string} [className] - The class name for the element
+ * @param {string} [content] - The text content for the element
+ * @returns {HTMLElement} The created element
+ */
 function createElement(type, className, content) {
     const element = document.createElement(type);
     if (className) element.className = className;
@@ -29,21 +45,18 @@ function createElement(type, className, content) {
     return element;
 }
 
+/**
+ * Creates an ingredients list
+ * @param {Array} ingredients - The ingredients array
+ * @returns {HTMLUListElement} The created unordered list
+ */
 function createIngredientsList(ingredients) {
-    const list = document.createElement('ul');
-    list.className = 'ingredients-list';
+    const list = createElement('ul', 'ingredients-list');
     
     ingredients.forEach(ingredient => {
-        const item = document.createElement('li');
-        item.className = 'ingredient-item';
-        
-        const title = document.createElement('div');
-        title.className = 'ingredient-title';
-        title.textContent = ingredient.ingredient;
-        
-        const quantity = document.createElement('div');
-        quantity.className = 'ingredient-quantity';
-        quantity.textContent = `${ingredient.quantity || ''} ${ingredient.unit || ''}`.trim();
+        const item = createElement('li', 'ingredient-item');
+        const title = createElement('div', 'ingredient-title', ingredient.ingredient);
+        const quantity = createElement('div', 'ingredient-quantity', `${ingredient.quantity || ''} ${ingredient.unit || ''}`.trim());
         
         item.appendChild(title);
         item.appendChild(quantity);
@@ -53,7 +66,11 @@ function createIngredientsList(ingredients) {
     return list;
 }
 
-
+/**
+ * Creates a recipe card
+ * @param {Object} recipe - The recipe object
+ * @returns {HTMLElement} The created recipe card
+ */
 function createRecipeCard(recipe) {
     const card = createElement('figure', 'recipe-card');
     const imageContainer = createElement('div', 'image-container');
@@ -72,7 +89,7 @@ function createRecipeCard(recipe) {
     const descriptionTitle = createElement('h4', null, 'RECETTE');
     const description = createElement('p', 'recipe-description', recipe.description);
     const ingredientsTitle = createElement('h4', 'recipe-nested-title', 'INGREDIENTS');
-    const ingredientsDiv = createElement('div', null);
+    const ingredientsDiv = createElement('div');
     const applianceTitle = createElement('h4', 'recipe-nested-title', 'APPAREILS');
     const appliance = createElement('p', 'recipe-content-text', recipe.appliance);
     const ustensilsTitle = createElement('h4', 'recipe-nested-title', 'USTENSILS');
@@ -80,39 +97,45 @@ function createRecipeCard(recipe) {
 
     ingredientsDiv.appendChild(ingredientsTitle);
     ingredientsDiv.appendChild(createIngredientsList(recipe.ingredients));
-    content.appendChild(title);
-    content.appendChild(descriptionTitle);    
-    content.appendChild(description);
-    content.appendChild(ingredientsTitle);
-    content.appendChild(ingredientsDiv);
-    content.appendChild(applianceTitle);
-    content.appendChild(appliance);
-    content.appendChild(ustensilsTitle);
-    content.appendChild(ustensils);
+    content.append(title, descriptionTitle, description, ingredientsTitle, ingredientsDiv, applianceTitle, appliance, ustensilsTitle, ustensils);
     card.appendChild(content);
 
     return card;
 }
 
+/**
+ * Renders the recipes grid
+ * @param {Array} recipes - The recipes array to render
+ */
 export function renderRecipesGrid(recipes) {
     const grid = document.querySelector('.recipes-grid');
     grid.innerHTML = '';
     recipes.forEach(recipe => grid.appendChild(createRecipeCard(recipe)));
-    document.querySelector(".recipes-counter").textContent = recipes.length + " recettes";
+    document.querySelector(".recipes-counter").textContent = `${recipes.length} recettes`;
 }
 
+/**
+ * Toggles the clear icon visibility
+ * @param {HTMLElement} clearIcon - The clear icon element
+ * @param {boolean} show - Whether to show or hide the icon
+ */
 function toggleClearIcon(clearIcon, show) {
     clearIcon.style.display = show ? 'inline' : 'none';
 }
 
-
+/**
+ * Clears all tags from the page
+ */
 function clearTags() {
-    document.querySelectorAll('.tag-wrapper').forEach(function(element) {
-        element.remove();
-    });
+    document.querySelectorAll('.tag-wrapper').forEach(element => element.remove());
 }
 
-
+/**
+ * Regenerates the page content and clears tags
+ * @param {Array} recipes - The recipes array
+ * @param {boolean} showClearIcon - Whether to show the clear icon
+ * @param {HTMLElement} clearIcon - The clear icon element
+ */
 function regeneratePageAndClearTags(recipes, showClearIcon, clearIcon) {
     renderRecipesGrid(recipes);
     initializeFilters(recipes);
@@ -120,35 +143,38 @@ function regeneratePageAndClearTags(recipes, showClearIcon, clearIcon) {
     toggleClearIcon(clearIcon, showClearIcon);
 }
 
-
+/**
+ * Handles input changes in the search field
+ * @param {string} inputText - The input text
+ * @param {HTMLElement} clearIcon - The clear icon element
+ * @param {Array} recipes - The full recipes array
+ */
 function handleInputChange(inputText, clearIcon, recipes) {
-    // Trim start of the input text
     const trimmedInput = inputText.trimStart();
-    
-    // Determine whether to show the clear icon
     const showClearIcon = trimmedInput.length > 0;
     
-    // Filter recipes based on the letter-only input
     recipesFilteredByName = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
     
-    // Update the recipes display
     regeneratePageAndClearTags(recipesFilteredByName, showClearIcon, clearIcon);
 }
 
-
-
-
+/**
+ * Handles clearing the search input
+ * @param {HTMLInputElement} searchInput - The search input element
+ * @param {HTMLElement} clearIcon - The clear icon element
+ * @param {Array} recipes - The full recipes array
+ */
 function handleClearIcon(searchInput, clearIcon, recipes) {
     searchInput.value = '';
     regeneratePageAndClearTags(recipes, false, clearIcon);
 }
 
-
-
+/**
+ * Initializes the application
+ */
 async function initializeApp() {
     try {
         const recipes = await fetchRecipesData();
-
         recipesFilteredByName = recipes;
 
         regeneratePageAndClearTags(recipes, false, document.querySelector('.clear-icon'));
@@ -165,5 +191,3 @@ async function initializeApp() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
-
-
