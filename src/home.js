@@ -12,9 +12,9 @@ export let recipesFilteredByName = [];
  * Sets the recipesFilteredByName array
  * @param {Array} recipes - The filtered recipes array
  */
-export function setrecipesFilteredByName(recipes) {
-    recipesFilteredByName = recipes;
-}
+// export function setrecipesFilteredByName(recipes) {
+//     recipesFilteredByName = recipes;
+// }
 
 /**
  * Fetches recipes data from the API
@@ -166,6 +166,7 @@ function handleInputChange(inputText, clearIcon, recipes) {
  */
 function handleClearIcon(searchInput, clearIcon, recipes) {
     searchInput.value = '';
+    recipesFilteredByName = recipes;
     regeneratePageAndClearTags(recipes, false, clearIcon);
 }
 
