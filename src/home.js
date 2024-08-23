@@ -31,41 +31,56 @@ function createElement(type, className, content) {
 
 function createIngredientsList(ingredients) {
     const list = document.createElement('ul');
+    list.className = 'ingredients-list';
+    
     ingredients.forEach(ingredient => {
         const item = document.createElement('li');
-        item.textContent = `
-            ${ingredient.quantity || ''} 
-            ${ingredient.unit || ''} 
-            ${ingredient.ingredient}`;
+        item.className = 'ingredient-item';
+        
+        const title = document.createElement('div');
+        title.className = 'ingredient-title';
+        title.textContent = ingredient.ingredient;
+        
+        const quantity = document.createElement('div');
+        quantity.className = 'ingredient-quantity';
+        quantity.textContent = `${ingredient.quantity || ''} ${ingredient.unit || ''}`.trim();
+        
+        item.appendChild(title);
+        item.appendChild(quantity);
         list.appendChild(item);
     });
+    
     return list;
 }
 
+
 function createRecipeCard(recipe) {
     const card = createElement('figure', 'recipe-card');
-
+    const imageContainer = createElement('div', 'image-container');
     const image = createElement('img', 'recipe-image');
     image.src = `${RECIPES_IMAGES_PATH}${recipe.image}`;
     image.alt = recipe.name;
-    card.appendChild(image);
+    imageContainer.appendChild(image);
+    
+    const timeBadge = createElement('span', 'recipe-time-badge', `${recipe.time}min`);
+    imageContainer.appendChild(timeBadge);
+    
+    card.appendChild(imageContainer);
 
     const content = createElement('div', 'recipe-card-content');
     const title = createElement('h3', 'recipe-title', recipe.name);
-    const info = createElement('p', 'recipe-info', `Servings: ${recipe.servings} | Time: ${recipe.time} mins`);
     const descriptionTitle = createElement('h4', null, 'RECETTE');
     const description = createElement('p', 'recipe-description', recipe.description);
-    const ingredientsTitle = createElement('h4', null, 'INGREDIENTS');
-    const ingredientsDiv = createElement('div', 'recipe-ingredients');
-    const applianceTitle = createElement('h4', null, 'APPAREILS');
-    const appliance = createElement('p', 'recipe-appliance', `Appliance: ${recipe.appliance}`);
-    const ustensilsTitle = createElement('h4', null, 'USTENSILS');
-    const ustensils = createElement('p', 'recipe-ustensils', `Ustensils: ${recipe.ustensils.join(', ')}`);
+    const ingredientsTitle = createElement('h4', 'recipe-nested-title', 'INGREDIENTS');
+    const ingredientsDiv = createElement('div', null);
+    const applianceTitle = createElement('h4', 'recipe-nested-title', 'APPAREILS');
+    const appliance = createElement('p', 'recipe-content-text', recipe.appliance);
+    const ustensilsTitle = createElement('h4', 'recipe-nested-title', 'USTENSILS');
+    const ustensils = createElement('p', 'recipe-content-text', recipe.ustensils.join(', '));
 
     ingredientsDiv.appendChild(ingredientsTitle);
     ingredientsDiv.appendChild(createIngredientsList(recipe.ingredients));
     content.appendChild(title);
-    content.appendChild(info);
     content.appendChild(descriptionTitle);    
     content.appendChild(description);
     content.appendChild(ingredientsTitle);
@@ -86,8 +101,8 @@ export function renderRecipesGrid(recipes) {
     document.querySelector(".recipes-counter").textContent = recipes.length + " recettes";
 }
 
-function toggleClearIcon(clearIcon, condition) {
-    clearIcon.style.display = condition ? 'inline' : 'none';
+function toggleClearIcon(clearIcon, show) {
+    clearIcon.style.display = show ? 'inline' : 'none';
 }
 
 
@@ -98,11 +113,11 @@ function clearTags() {
 }
 
 
-function regeneratePageAndClearTags(recipes, shouldShowClearIcon, clearIcon) {
+function regeneratePageAndClearTags(recipes, showClearIcon, clearIcon) {
     renderRecipesGrid(recipes);
     initializeFilters(recipes);
     clearTags();
-    toggleClearIcon(clearIcon, shouldShowClearIcon);
+    toggleClearIcon(clearIcon, showClearIcon);
 }
 
 
@@ -111,13 +126,13 @@ function handleInputChange(inputText, clearIcon, recipes) {
     const trimmedInput = inputText.trimStart();
     
     // Determine whether to show the clear icon
-    const shouldShowClearIcon = trimmedInput.length > 0;
+    const showClearIcon = trimmedInput.length > 0;
     
     // Filter recipes based on the letter-only input
     recipesFilteredByName = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
     
     // Update the recipes display
-    regeneratePageAndClearTags(recipesFilteredByName, shouldShowClearIcon, clearIcon);
+    regeneratePageAndClearTags(recipesFilteredByName, showClearIcon, clearIcon);
 }
 
 

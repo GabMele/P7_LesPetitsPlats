@@ -5,6 +5,14 @@ import { renderRecipesGrid }from './home.js';
 import { recipesFilteredByName } from './home.js';
 
 
+
+console.log("START dropdowm SETUp handleFilters.js");
+const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
+dropdowns.forEach(dropdown => addListenersOnDropdownsToDisplayDropdownList(dropdown));
+console.log("END dropdowm SETUp handleFilters.js");
+
+
+
 export function initializeFilters(recipes) {
     //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
 
@@ -35,10 +43,10 @@ function initializeFilterSets(dropdowns) {
 
 function populateFilters(recipes, filters) {
     const addToFilterSet = (filterKey, item, set) => {
-        const lowerItem = item.toLowerCase();
-        if (!set.has(lowerItem)) {
+        const lowercaseItem = item.toLowerCase();
+        if (!set.has(lowercaseItem)) {
             filters[filterKey].add(item);
-            set.add(lowerItem);
+            set.add(lowercaseItem);
         }
     };
 
@@ -73,7 +81,7 @@ function initializeDropdowns(dropdowns, filters, recipes) {
         itemsList.innerHTML = '';
 
         populateDropdownItems(itemsList, filters[id]);
-        addListenersOnDropdownsToDisplayDropdownList(dropdown, searchInput);
+        //addListenersOnDropdownsToDisplayDropdownList(dropdown, searchInput);
         addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList);
         addListenersOnDropdownItemsAndLaunchHandling(itemsList, dropdown, recipes);
     });
@@ -93,9 +101,13 @@ function populateDropdownItems(itemsList, filterSet) {
 
 
 
-function addListenersOnDropdownsToDisplayDropdownList(dropdown, searchInput) {
+function addListenersOnDropdownsToDisplayDropdownList(dropdownId) {
+    console.log("DROPDONN 104 : ", dropdownId);
+    var dropdown = document.getElementById(dropdownId);
+    console.log('DROPDONN 106 : ', dropdown);
     const dropdownButton = dropdown.querySelector('.dropdown-button');
     const dropdownContent = dropdown.querySelector('.dropdown-content');
+    const searchInput = dropdown.querySelector('.searchInput');
 
     dropdownButton.addEventListener('click', function(event) {
         event.stopPropagation(); // Prevent event from bubbling upwards
@@ -236,15 +248,26 @@ function getTagsCategory(dropdown) {
     return dropdown.id.split('-')[0];
 }
 
+
+
 function regeneratePageKeepingTagsUntouched() {
+    // Retrieve the existing tags
+    const existingTags = getAllExistingTags();
 
-    const allExistingTags = getAllExistingTags();
-    const filteredRecipesByNameAndTags = filterRecipesByTags(recipesFilteredByName, allExistingTags);
+    // Check if there are any tags to filter by
+    const hasTags = Object.keys(existingTags).length > 0;
+    
+    // Filter recipes only if there are tags to filter by
+    const recipesToRender = hasTags 
+        ? filterRecipesByTags(recipesFilteredByName, existingTags)
+        : recipesFilteredByName;
 
-    renderRecipesGrid(filteredRecipesByNameAndTags);
-    initializeFilters(filteredRecipesByNameAndTags);
+    // Render the recipes in the grid
+    renderRecipesGrid(recipesToRender);
+
+    // Initialize the filters with the (potentially filtered) recipes
+    initializeFilters(recipesToRender);
 }
-
 
 
 
@@ -265,6 +288,7 @@ function createTag(item, itemsList, recipes) {
     return newTagWrapper;
 }
 
+
 function createCloseButtonAndHandleTagRemoval(tagWrapper, itemsList) {
     const closeButton = document.createElement('span');
     closeButton.textContent = '✕';
@@ -283,21 +307,21 @@ function createCloseButtonAndHandleTagRemoval(tagWrapper, itemsList) {
     return closeButton;
 }
 
+
 function removeItemFromList(itemToRemove, itemsList) {
     const listItemToRemove = Array.from(itemsList.children).find(child => 
         child.textContent.trim() === itemToRemove
     );
 
-    // console.log("itemsList:", itemsList);
-    // console.log("itemsList.children:", itemsList.children);
-    // console.log("itemToRemove:", itemToRemove);
-    // console.log("listItemToRemove:", listItemToRemove);
+    console.log("itemsList:", itemsList);
+    console.log("itemsList.children:", itemsList.children);
+    console.log("itemToRemove:", itemToRemove);
+    console.log("listItemToRemove:", listItemToRemove);
 
     if (listItemToRemove) {
         itemsList.removeChild(listItemToRemove);
     }
 }
-
 
 
 function addItemToList(itemToAdd, itemsList) {

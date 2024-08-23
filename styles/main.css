@@ -12,17 +12,13 @@
 }
 
 
-
-
-
-
 /* Body */
 body {
   @apply bg-gray-100 mx-auto max-w-7xl px-8;
 }
 
 main {
-  @apply px-0 pt-4;
+  @apply px-0 pt-4 pb-12;
 }
 
 
@@ -32,8 +28,8 @@ h1, h2, h3 {
 
 /* Hero Section */
 .hero {
-  @apply relative bg-center h-[667px];
-  background-image: url('../assets/hero-background.jpg');
+  @apply relative bg-center h-[667px]
+    bg-[url('../assets/hero-background.jpg')];
 }
 
 
@@ -50,6 +46,16 @@ h1, h2, h3 {
   animation: fadeIn 1000ms forwards;
 }
 
+
+.hero-logo {
+  @apply absolute top-8 left-8 p-4;
+}
+
+.logo-image {
+  @apply w-1/2;
+}
+
+
 .hero-content {
   @apply h-full flex flex-col items-center justify-center;
   @apply fade-in;
@@ -58,13 +64,12 @@ h1, h2, h3 {
 
 .hero-title {
   @apply text-4xl leading-[3.5rem] mb-3 text-center;
-  color: var(--highlight-color);
+    color: var(--highlight-color);
 }
 
 .search-bar {
-  @apply w-2/3 mt-8 rounded-xl;
+  @apply w-2/3 mt-8 rounded-xl opacity-0;
   animation: fadeIn 1000ms forwards 500ms; /* Reuse fadeIn with a delay */
-  opacity: 0;
   transition: box-shadow 0.3s;
 }
 
@@ -80,15 +85,13 @@ h1, h2, h3 {
 
 
 .input-wrapper {
-  @apply w-full;
-  position: relative;
+  @apply w-full relative;
 }
 
 
 .hero-input {
-  @apply text-xl px-4 py-3 rounded-l-xl w-full;
-  color: black;
-  line-height: 2.4rem;
+  @apply text-xl px-4 py-3 rounded-l-xl w-full
+    text-black leading-10;
 }
 
 .hero-button {
@@ -97,51 +100,31 @@ h1, h2, h3 {
 
 
 .clear-icon {
-  display: none;
-  font-size: 3rem;
-  position: absolute;
-  top: -15%;
-  right: 2%; 
-  color: #333; /* Dark gray for contrast against light backgrounds */
-  cursor: pointer; /* Indicates clickable area */
-  transition: color 0.2s ease; /* Smooth transition for hover effect */
+  @apply hidden absolute -top-[24%] right-[2%] text-gray-400 text-[3.5rem] 
+  cursor-pointer transition-colors duration-200 ease-in
+  hover:text-gray-800;
 }
-
-/* Optional: Hover effect for better user interaction */
-.clear-icon:hover {
-  color: #999; /* Lighter shade for hover state */
-}
-
-
-
 
 
 .filters-section {
-  @apply mt-4 flex px-0;
+  @apply mt-4 flex px-0 justify-between;
 }
 
 .filters {
-  @apply flex grow items-start ;
-  gap: 5%;
+  @apply flex grow items-start justify-between max-w-[700px];
 }
 
 .recipes-counter {
-  @apply p-3 whitespace-nowrap text-lg font-bold;
+  @apply p-1 whitespace-nowrap text-lg font-bold;
 }
 
 .dropdown {
-  @apply rounded-lg mr-8;
-  display: flex;
-  flex-direction: column;
-  width: 30%;
-  max-width: 200px;
-  /* z-index: 1; */
+  @apply rounded-lg mr-4 flex flex-col w-[30%] max-w-[200px];
 }
 
 .dropdown-button { 
-  @apply flex items-center w-full justify-between px-3 py-2 rounded-lg;
-    text-align: left;
-    background-color: var(--bg-white);
+  @apply flex items-center w-full justify-between px-3 py-2 
+    rounded-lg text-left bg-white;
 }
 
 .dropdown i {
@@ -150,92 +133,46 @@ h1, h2, h3 {
 
 
 .dropdown-content {
-  @apply py-2 rounded-b-lg;
-  display: none;
-  background-color: var(--bg-white);
-  margin-top: -4px;
-
+  @apply py-2 rounded-b-lg hidden -mt-1 bg-white;
 }
 
 .searchInput {
-  @apply p-2 mx-3 mt-1 mb-3;
-  border: 1px solid #ccc;
-  outline: none;
-  width: 88%;
-  /*
-  width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-*/
-
-
+  @apply p-2 mx-3 mt-1 mb-3 border border-gray-300 outline-none w-[88%];
 }
 
 .itemsList {
-  max-height: 200px;
-  overflow-y: auto;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  @apply max-h-[200px] overflow-y-auto list-none p-0 m-0;
 }
 
 
 .dropdown-item {
-  @apply px-3 py-1 text-sm rounded-lg;
-  cursor: pointer;
+  @apply px-3 py-1 text-sm rounded-lg cursor-pointer
+    hover:bg-[var(--highlight-color)];
 }
 
-.dropdown-item:hover {
-  background-color: var(--highlight-color) ;
-}
 
 .filter-selected {
-  @apply mt-4 ml-0 rounded-lg;
-  flex-wrap: wrap;
-  display: none;
-  /*width: inherit;*/
-  overflow: visible;
+  @apply mt-4 ml-0 hidden rounded-lg flex 
+    flex-wrap overflow-visible;
 }
 
 .filter-selected .tag-wrapper {
   @apply mt-0 mb-2 ml-0 mr-2 pl-3 pr-2 py-1 
-         rounded-lg;
-  /*
-  position: absolute;
-  */
-  flex-grow: 0;
-  background-color: var(--highlight-color) ;
+      rounded-lg flex-grow-0 bg-[var(--highlight-color)];
 }
 
 
 .filter-selected .tag-content {
-  @apply text-sm text-nowrap;
-
-  white-space: nowrap;
+  @apply text-sm text-nowrap white-space-nowrap;
 }
 
 .filter-selected .remove-tag {
-  @apply ml-2 mr-1;
-  display: inline-block;
-  color: #555; /* Dark gray for contrast */
-  font-size: 1rem;
-  cursor: pointer; /* Indicates clickable area */
-  transition: color 0.2s ease, transform 0.2s ease; 
-}
-
-/* Optional: Hover effect for better user interaction */
-.filter-selected .remove-tag:hover {
-  color: #000; /* Lighter shade for hover state */
-  transform: scale(1.8);
+  @apply ml-2 mr-1 inline-block text-gray-500 text-base 
+    cursor-pointer hover:text-black hover:shadow-xl hover:scale-150;
 }
 
 
-
-
-/* ======================= */
-
-/* Recipes Grid */
+/* ======= Recipes Grid ========================= */
 .recipes-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3
     gap-12 gap-y-20 py-8 px-0 justify-between; /* Using the custom CSS variable */
@@ -259,9 +196,13 @@ h1, h2, h3 {
 
 */  }
 
+
+.image-container {
+  @apply relative;
+}
+
 .recipe-card-content {
-  @apply bg-white p-6 rounded-2xl shadow-sm overflow-auto;
-  height: 27rem;
+  @apply bg-white p-6 rounded-2xl shadow-sm h-[27rem] overflow-auto;
 }
 
 .recipe-card-content:hover {
@@ -272,8 +213,34 @@ h1, h2, h3 {
   @apply w-full h-60 object-cover rounded-t-xl;
 }
 
-.recipe-details {
-  @apply p-4;
+
+.recipe-time-badge {
+  @apply text-sm px-4 py-1 rounded-full absolute top-4 right-4 z-10 
+    bg-[var(--highlight-color)];
+}
+
+.recipe-nested-title {
+  @apply text-sm;
+}
+
+.ingredients-list {
+  @apply grid grid-cols-2 gap-4;
+}
+
+.ingredient-item {
+  @apply mb-3;
+}
+
+.ingredient-title {
+  @apply text-sm font-bold;
+}
+
+.ingredient-quantity {
+  @apply text-sm;
+}
+
+.recipe-content-text {
+  @apply text-sm;
 }
 
 .recipe-title {
