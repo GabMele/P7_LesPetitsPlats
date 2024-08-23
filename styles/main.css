@@ -1,16 +1,31 @@
 /* styles/main.css */
+
+/**
+ * NOTE:
+ * This CSS file must be compiled using a tool like PostCSS, as it includes 
+ * Tailwind CSS directives (`@apply`, `@import`, etc.) and custom utilities 
+ * that require processing before being used in production.
+ * 
+ * Make sure to run the appropriate build/compile command:
+ * 
+ * Example (in my terminal):
+ *   npx tailwindcss -i ./src/styles/main.css -o ./dist/output.css --watch
+ *
+ * For development with nodemon:
+ * nodemon --watch styles/main.css --exec "npx postcss styles/main.css -o dist/output.css\"
+ */
+
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
-/* Custom CSS Variable */
+/* Custom CSS Variables */
 :root {
     --recipes-grid-bg-color: lightgray;
     --highlight-color: #FFD15B;
     --bg-white: white;
 }
-
 
 /* Body */
 body {
@@ -21,7 +36,6 @@ main {
   @apply px-0 pt-4 pb-12;
 }
 
-
 h1, h2, h3 {
   font-family: 'Anton', sans-serif;
 }
@@ -31,7 +45,6 @@ h1, h2, h3 {
   @apply relative bg-center h-[667px]
     bg-[url('../assets/hero-background.jpg')];
 }
-
 
 @keyframes fadeIn {
   from {
@@ -46,7 +59,6 @@ h1, h2, h3 {
   animation: fadeIn 1000ms forwards;
 }
 
-
 .hero-logo {
   @apply absolute top-8 left-8 p-4;
 }
@@ -55,57 +67,47 @@ h1, h2, h3 {
   @apply w-1/2;
 }
 
-
 .hero-content {
-  @apply h-full flex flex-col items-center justify-center;
-  @apply fade-in;
+  @apply h-full flex flex-col items-center justify-center fade-in;
 }
-
 
 .hero-title {
   @apply text-4xl leading-[3.5rem] mb-3 text-center;
-    color: var(--highlight-color);
+  color: var(--highlight-color);
 }
 
 .search-bar {
   @apply w-2/3 mt-8 rounded-xl opacity-0;
-  animation: fadeIn 1000ms forwards 500ms; /* Reuse fadeIn with a delay */
+  animation: fadeIn 1000ms forwards 500ms;
   transition: box-shadow 0.3s;
 }
 
 .search-bar:hover {
-  /* box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5); /* Adjust values as needed */
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
 }
-
 
 .hero-form {
   @apply flex justify-center items-center;
 }
 
-
 .input-wrapper {
   @apply w-full relative;
 }
 
-
 .hero-input {
-  @apply text-xl px-4 py-3 rounded-l-xl w-full
-    text-black leading-10;
+  @apply text-xl px-4 py-3 rounded-l-xl w-full text-black leading-10;
 }
 
 .hero-button {
   @apply py-2 pr-2 rounded-r-xl bg-white;
 }
 
-
 .clear-icon {
-  @apply hidden absolute -top-[24%] right-[2%] text-gray-400 text-[3.5rem] 
-  cursor-pointer transition-colors duration-200 ease-in
-  hover:text-gray-800;
+  @apply hidden absolute -top-[24%] right-[2%] text-gray-400 text-[3.5rem] cursor-pointer
+    transition-colors duration-200 ease-in hover:text-gray-800;
 }
 
-
+/* Filters Section */
 .filters-section {
   @apply mt-4 flex px-0 justify-between;
 }
@@ -131,7 +133,6 @@ h1, h2, h3 {
   @apply ml-auto pl-2;
 }
 
-
 .dropdown-content {
   @apply py-2 rounded-b-lg hidden -mt-1 bg-white;
 }
@@ -144,23 +145,18 @@ h1, h2, h3 {
   @apply max-h-[200px] overflow-y-auto list-none p-0 m-0;
 }
 
-
 .dropdown-item {
-  @apply px-3 py-1 text-sm rounded-lg cursor-pointer
-    hover:bg-[var(--highlight-color)];
+  @apply px-3 py-1 text-sm rounded-lg cursor-pointer hover:bg-[var(--highlight-color)];
 }
 
-
 .filter-selected {
-  @apply mt-4 ml-0 hidden rounded-lg flex 
-    flex-wrap overflow-visible;
+  @apply mt-4 ml-0 hidden rounded-lg flex flex-wrap overflow-visible;
 }
 
 .filter-selected .tag-wrapper {
-  @apply mt-0 mb-2 ml-0 mr-2 pl-3 pr-2 py-1 
-      rounded-lg flex-grow-0 bg-[var(--highlight-color)];
+  @apply mt-0 mb-2 ml-0 mr-2 pl-3 pr-2 py-1 rounded-lg flex-grow-0 
+    bg-[var(--highlight-color)];
 }
-
 
 .filter-selected .tag-content {
   @apply text-sm text-nowrap white-space-nowrap;
@@ -171,31 +167,20 @@ h1, h2, h3 {
     cursor-pointer hover:text-black hover:shadow-xl hover:scale-150;
 }
 
-
-/* ======= Recipes Grid ========================= */
+/* Recipes Grid */
 .recipes-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3
-    gap-12 gap-y-20 py-8 px-0 justify-between; /* Using the custom CSS variable */
-    /*background-color: (--recipes-grid-bg-color);*/
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3
+    gap-12 gap-y-20 py-8 px-0 justify-between;
+  background-color: var(--recipes-grid-bg-color);
 }
-
 
 .section-title {
   @apply text-3xl font-bold mb-6 text-center;
 }
 
-/*
-.recipe-cards {
-  @apply flex flex-wrap -mx-4;
-}
-*/
-
 .recipe-card {
-  /*
-  @apply w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-0 mx-0 my-4 text-sm;
-
-*/  }
-
+  /* Uncomment as necessary */
+}
 
 .image-container {
   @apply relative;
@@ -213,10 +198,8 @@ h1, h2, h3 {
   @apply w-full h-60 object-cover rounded-t-xl;
 }
 
-
 .recipe-time-badge {
-  @apply text-sm px-4 py-1 rounded-full absolute top-4 right-4 z-10 
-    bg-[var(--highlight-color)];
+  @apply text-sm px-4 py-1 rounded-full absolute top-4 right-4 z-10 bg-[var(--highlight-color)];
 }
 
 .recipe-nested-title {
