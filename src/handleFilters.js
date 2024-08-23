@@ -14,19 +14,30 @@ console.log("END dropdowm SETUp handleFilters.js");
 
 
 export function initializeFilters(recipes) {
-    //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
-
-    const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
-
+    const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown'))
+                           .map(dropdown => dropdown.id);
     const filters = initializeFilterSets(dropdowns);
-
     populateFilters(recipes, filters);
-
     initializeDropdowns(dropdowns, filters, recipes);
-
+    removeSelectedTagsFromDropdowns(dropdowns);
     console.log("initialized Dropdowns DONE : ", dropdowns);
-
 }
+
+function removeSelectedTagsFromDropdowns(dropdowns) {
+    dropdowns.forEach(id => {
+        const dropdown = document.getElementById(id);
+        const selectedTagsDiv = dropdown.querySelector('.filter-selected');
+        const itemsList = dropdown.querySelector('.itemsList');
+        
+        const selectedTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
+            .map(span => span.textContent.trim());
+        
+        selectedTags.forEach(tag => {
+            removeItemFromList(tag, itemsList);
+        });
+    });
+}
+
 
 function initializeFilterSets(dropdowns) {
     const filters = {};
@@ -283,7 +294,7 @@ function createTag(item, itemsList, recipes) {
 
     newTagWrapper.appendChild(newTagContent);
     newTagWrapper.appendChild(closeButton);
-    removeItemFromList(item, itemsList)
+    //removeItemFromList(item, itemsList)
 
     return newTagWrapper;
 }
