@@ -232,7 +232,7 @@ function handleSelectedDropdownItem(target, itemsList, dropdown, recipes) {
  * @param {HTMLElement} itemsList - The list of items.
  * @param {Array} recipes - The array of recipes.
  */
-function createAndAddTagToTagsArea(selectedItem, selectedTagsDiv, itemsList, recipes) {
+function createAndAddTagToTagsArea(selectedItem, selectedTagsDiv, itemsList) {
     const newTagWrapper = createTagElement(selectedItem, itemsList);
     selectedTagsDiv.appendChild(newTagWrapper);
     selectedTagsDiv.style.display = 'flex';
