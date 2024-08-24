@@ -233,7 +233,7 @@ function handleSelectedDropdownItem(target, itemsList, dropdown, recipes) {
  * @param {Array} recipes - The array of recipes.
  */
 function createAndAddTagToTagsArea(selectedItem, selectedTagsDiv, itemsList, recipes) {
-    const newTagWrapper = createTagElement(selectedItem, itemsList, recipes);
+    const newTagWrapper = createTagElement(selectedItem, itemsList);
     selectedTagsDiv.appendChild(newTagWrapper);
     selectedTagsDiv.style.display = 'flex';
 }
@@ -299,7 +299,7 @@ function regeneratePageKeepingTagsUntouched() {
  * @param {Array} recipes - The array of recipes.
  * @returns {HTMLElement} The created tag wrapper element.
  */
-function createTagElement(item, itemsList, recipes) {
+function createTagElement(item, itemsList) {
     const newTagWrapper = document.createElement('div');
     newTagWrapper.classList.add('tag-wrapper');
 
