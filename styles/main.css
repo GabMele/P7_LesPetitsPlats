@@ -41,6 +41,7 @@ h1, h2, h3 {
 }
 
 /* Hero Section */
+
 .hero {
   @apply relative bg-center h-[667px]
     bg-[url('../assets/hero-background.jpg')];
@@ -107,7 +108,16 @@ h1, h2, h3 {
     transition-colors duration-200 ease-in hover:text-gray-800;
 }
 
+.no-recipes-message {
+  @apply hidden text-center text-2xl text-gray-800 mt-8;
+}
+
+.search-term {
+  @apply font-semibold;
+}
+
 /* Filters Section */
+
 .filters-section {
   @apply mt-4 flex px-0 justify-between;
 }
@@ -119,6 +129,8 @@ h1, h2, h3 {
 .recipes-counter {
   @apply p-1 whitespace-nowrap text-lg font-bold;
 }
+
+/* Dropdowns */
 
 .dropdown {
   @apply rounded-lg mr-4 flex flex-col w-[30%] max-w-[200px];
@@ -159,7 +171,8 @@ h1, h2, h3 {
 }
 
 .filter-selected .tag-content {
-  @apply text-sm text-nowrap white-space-nowrap;
+  @apply text-sm text-nowrap;
+  white-space: nowrap;
 }
 
 .filter-selected .remove-tag {
@@ -168,10 +181,10 @@ h1, h2, h3 {
 }
 
 /* Recipes Grid */
+
 .recipes-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3
     gap-12 gap-y-20 py-8 px-0 justify-between;
-  background-color: var(--recipes-grid-bg-color);
 }
 
 .section-title {

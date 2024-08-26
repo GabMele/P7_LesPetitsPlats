@@ -9,14 +9,6 @@ import { filterRecipesByName } from './handleRecipesSearch.js';
 export let recipesFilteredByName = [];
 
 /**
- * Sets the recipesFilteredByName array
- * @param {Array} recipes - The filtered recipes array
- */
-// export function setrecipesFilteredByName(recipes) {
-//     recipesFilteredByName = recipes;
-// }
-
-/**
  * Fetches recipes data from the API
  * @returns {Promise<Array>} The recipes data
  * @throws {Error} If there's an error fetching the data
@@ -137,6 +129,7 @@ function clearTags() {
  * @param {HTMLElement} clearIcon - The clear icon element
  */
 function regeneratePageAndClearTags(recipes, showClearIcon, clearIcon) {
+    hideNoRecipesFoundMessage();
     renderRecipesGrid(recipes);
     initializeFilters(recipes);
     clearTags();
@@ -155,7 +148,36 @@ function handleInputChange(inputText, clearIcon, recipes) {
     
     recipesFilteredByName = trimmedInput.length >= 3 ? filterRecipesByName(recipes, trimmedInput) : recipes;
     
-    regeneratePageAndClearTags(recipesFilteredByName, showClearIcon, clearIcon);
+    if (recipesFilteredByName.length === 0 && trimmedInput.length >= 3) {
+        showNoRecipesFoundMessage(trimmedInput);
+    } else {
+        regeneratePageAndClearTags(recipesFilteredByName, showClearIcon, clearIcon);
+    }
+}
+
+/**
+ * Shows a message when no recipes are found
+ * @param {string} searchTerm - The search term that yielded no results
+ */
+function showNoRecipesFoundMessage(searchTerm) {
+    const grid = document.querySelector('.recipes-grid');
+    const message = document.querySelector('.no-recipes-message');
+    const searchTermSpan = document.querySelector('.search-term');
+    
+    grid.innerHTML = ''; // Clear existing recipes
+    searchTermSpan.textContent = searchTerm;
+    message.style.display = 'block';
+    document.querySelector(".recipes-counter").textContent = "0 recettes";
+}
+
+/**
+ * Hides the no recipes found message
+ */
+function hideNoRecipesFoundMessage() {
+    const message = document.getElementById('no-recipes-message');
+    if (message) {
+        message.style.display = 'none';
+    }
 }
 
 /**
