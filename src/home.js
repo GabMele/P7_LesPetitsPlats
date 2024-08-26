@@ -173,8 +173,8 @@ function showNoRecipesFoundMessage(searchTerm) {
 /**
  * Hides the no recipes found message
  */
-function hideNoRecipesFoundMessage() {
-    const message = document.getElementById('no-recipes-message');
+export function hideNoRecipesFoundMessage() {
+    const message = document.querySelector('.no-recipes-message');
     if (message) {
         message.style.display = 'none';
     }

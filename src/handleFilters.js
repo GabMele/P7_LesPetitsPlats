@@ -1,7 +1,7 @@
 // handleFilters.js
 
 import { filterRecipesByTags } from './handleRecipesSearch.js';
-import { renderRecipesGrid, recipesFilteredByName } from './home.js';
+import { renderRecipesGrid, recipesFilteredByName, hideNoRecipesFoundMessage } from './home.js';
 
 /**
  * Add an item to the list.
@@ -288,6 +288,7 @@ function regeneratePageKeepingTagsUntouched() {
         ? filterRecipesByTags(recipesFilteredByName, existingTags)
         : recipesFilteredByName;
 
+    hideNoRecipesFoundMessage();
     renderRecipesGrid(recipesToRender);
     initializeFilters(recipesToRender);
 }
