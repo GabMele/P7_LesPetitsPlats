@@ -15,7 +15,7 @@ export function filterRecipesByTags(allRecipes, selectedTags) {
                 isRecipeMatchingTag(recipe, category, tagValue.toLowerCase())
             )
         )
-    );-
+    );
 }
 
 /**
