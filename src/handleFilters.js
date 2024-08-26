@@ -1,344 +1,261 @@
 // handleFilters.js
 
 import { filterRecipesByTags } from './handleRecipesSearch.js';
-import { renderRecipesGrid }from './home.js';
+import { renderRecipesGrid, recipesFilteredByName, hideNoRecipesFoundMessage } from './home.js';
 
-export function initializeFilters(recipes) {
-    //const dropdowns = ['ingredients-filter', 'appliance-filter', 'ustensils-filter'];
-
-    const dropdowns = Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
-
-    const filters = initializeFilterSets(dropdowns);
-
-    populateFilters(recipes, filters);
-
-    initializeDropdowns(dropdowns, filters, recipes);
-
-    console.log("initialized Dropdowns DONE : ", dropdowns);
-
+/**
+ * Add an item to the list.
+ * @param {string} itemToAdd - The item to add.
+ * @param {HTMLElement} itemsList - The list of items.
+ */
+function addItemToList(itemToAdd, itemsList) {
+    const li = document.createElement('li');
+    li.classList.add('dropdown-item');
+    li.textContent = itemToAdd;
+    itemsList.appendChild(li);
 }
 
-function initializeFilterSets(dropdowns) {
+/**
+ * Remove an item from the list.
+ * @param {string} itemToRemove - The item to remove.
+ * @param {HTMLElement} itemsList - The list of items.
+ */
+function removeItemFromList(itemToRemove, itemsList) {
+    const listItemToRemove = Array.from(itemsList.children).find(child => 
+        child.textContent.trim() === itemToRemove
+    );
+
+    if (listItemToRemove) {
+        itemsList.removeChild(listItemToRemove);
+    }
+}
+
+/**
+ * Initialize the filter functionality.
+ * @param {Array} recipes - The array of recipes to filter.
+ */
+export function initializeFilters(recipes) {
+    const dropdowns = getAllDropdownIds();
+    const filters = createEmptyFilterSetsForDropdowns(dropdowns);
+    populateFilterSetsFromRecipes(recipes, filters);
+    initializeDropdownsWithItemsAndListeners(dropdowns, filters, recipes);
+    removeSelectedTagsFromDropdowns(dropdowns);
+}
+
+/**
+ * Get all dropdown elements.
+ * @returns {Array} An array of dropdown IDs.
+ */
+function getAllDropdownIds() {
+    return Array.from(document.querySelectorAll('.filters .dropdown')).map(dropdown => dropdown.id);
+}
+
+/**
+ * Initialize filter sets for each dropdown.
+ * @param {Array} dropdowns - Array of dropdown IDs.
+ * @returns {Object} An object with empty sets for each dropdown.
+ */
+function createEmptyFilterSetsForDropdowns(dropdowns) {
     const filters = {};
     dropdowns.forEach(id => filters[id] = new Set());
     return filters;
 }
 
-
-// this function manage also the case where an ingredient is 
-// written with different cases : as "chocolat" and "Chocolat" :
-// in this case, only the firtst occurence will be added keeping
-// the original case.
-// To achieve this, we will use a Set object
-// function populateFilters(recipes, filters) {
-//     const uniqueIngredients = new Set();
-//     const uniqueAppliances = new Set();
-//     const uniqueustensils = new Set();
-
-//     recipes.forEach(recipe => {
-//         recipe.ingredients.forEach(ingredient => {
-//             const ingredientName = ingredient.ingredient;
-//             const lowerIngredientName = ingredientName.toLowerCase();
-//             if (!uniqueIngredients.has(lowerIngredientName)) {
-//                 filters['ingredients-filter'].add(ingredientName); // Add to set in filters object
-//                 uniqueIngredients.add(lowerIngredientName);
-//             }
-//         });
-
-//         const applianceName = recipe.appliance;
-//         const lowerApplianceName = applianceName.toLowerCase();
-//         if (!uniqueAppliances.has(lowerApplianceName)) {
-//             filters['appliance-filter'].add(applianceName); // Add to set in filters object
-//             uniqueAppliances.add(lowerApplianceName);
-//         }
-
-//         recipe.ustensils.forEach(ustensil => {
-//             const ustensilName = ustensil;
-//             const lowerUstensilName = ustensilName.toLowerCase();
-//             if (!uniqueustensils.has(lowerUstensilName)) {
-//                 filters['ustensils-filter'].add(ustensilName); // Add to set in filters object
-//                 uniqueustensils.add(lowerUstensilName);
-//             }
-//         });
-//     });
-// }
-
-
-
-function populateFilters(recipes, filters) {
-    const addToFilterSet = (filterKey, item, set) => {
-        const lowerItem = item.toLowerCase();
-        if (!set.has(lowerItem)) {
-            filters[filterKey].add(item);
-            set.add(lowerItem);
-        }
+/**
+ * Populate filters with unique items from recipes.
+ * @param {Array} recipes - The array of recipes.
+ * @param {Object} filters - The filters object to populate.
+ */
+function populateFilterSetsFromRecipes(recipes, filters) {
+    const uniqueSets = {
+        ingredients: new Set(),
+        appliances: new Set(),
+        ustensils: new Set()
     };
-
-    const uniqueIngredients = new Set();
-    const uniqueAppliances = new Set();
-    const uniqueUstensils = new Set();
 
     recipes.forEach(recipe => {
         recipe.ingredients.forEach(ingredient => {
-            addToFilterSet('ingredients-filter', ingredient.ingredient, uniqueIngredients);
+            addUniqueItemToFilterSet('ingredients-filter', ingredient.ingredient, uniqueSets.ingredients, filters);
         });
-
-        addToFilterSet('appliance-filter', recipe.appliance, uniqueAppliances);
-
+        addUniqueItemToFilterSet('appliance-filter', recipe.appliance, uniqueSets.appliances, filters);
         recipe.ustensils.forEach(ustensil => {
-            addToFilterSet('ustensils-filter', ustensil, uniqueUstensils);
+            addUniqueItemToFilterSet('ustensils-filter', ustensil, uniqueSets.ustensils, filters);
         });
     });
 }
 
+/**
+ * Add an item to a filter set, maintaining uniqueness.
+ * @param {string} filterKey - The key of the filter in the filters object.
+ * @param {string} item - The item to add.
+ * @param {Set} uniqueSet - The set to check for uniqueness.
+ * @param {Object} filters - The filters object.
+ */
+function addUniqueItemToFilterSet(filterKey, item, uniqueSet, filters) {
+    const lowercaseItem = item.toLowerCase();
+    if (!uniqueSet.has(lowercaseItem)) {
+        filters[filterKey].add(item);
+        uniqueSet.add(lowercaseItem);
+    }
+}
 
+/**
+ * Remove selected tags from dropdowns.
+ * @param {Array} dropdowns - Array of dropdown IDs.
+ */
+function removeSelectedTagsFromDropdowns(dropdowns) {
+    dropdowns.forEach(id => {
+        const dropdown = document.getElementById(id);
+        const selectedTagsDiv = dropdown.querySelector('.filter-selected');
+        const itemsList = dropdown.querySelector('.itemsList');
+        
+        const selectedTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
+            .map(span => span.textContent.trim());
+        
+        selectedTags.forEach(tag => {
+            removeItemFromList(tag, itemsList);
+        });
+    });
+}
 
-
-
-
-
-function initializeDropdowns(dropdowns, filters, recipes) {
+/**
+ * Initialize dropdowns with items and event listeners.
+ * @param {Array} dropdowns - Array of dropdown IDs.
+ * @param {Object} filters - The filters object.
+ * @param {Array} recipes - The array of recipes.
+ */
+function initializeDropdownsWithItemsAndListeners(dropdowns, filters, recipes) {
     dropdowns.forEach(id => {
         const dropdown = document.getElementById(id);
         const searchInput = dropdown.querySelector('.searchInput');
         const itemsList = dropdown.querySelector('.itemsList');
         itemsList.innerHTML = '';
 
-
-        // console.log("dropdown : ", dropdown);
-        // console.log("itemsList : ", itemsList);
-        // console.log("searchInput : ", searchInput);
-        // console.log("filters[id] : ", filters[id]);
-        // console.log("------------------");
-
         populateDropdownItems(itemsList, filters[id]);
-        setupDropdownToggle(dropdown, searchInput);
-        setupSearchFilter(searchInput, itemsList);
-        setupDropdownItemSelection(itemsList, dropdown, recipes);
+        addListenersOnDropdownsToDisplayDropdownList(id);
+        addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList);
+        addListenersOnDropdownItemsAndLaunchHandling(itemsList, dropdown, recipes);
     });
 }
 
+/**
+ * Populate a dropdown's item list.
+ * @param {HTMLElement} itemsList - The list element to populate.
+ * @param {Set} filterSet - The set of items to add to the list.
+ */
 function populateDropdownItems(itemsList, filterSet) {
-    filterSet.forEach(item => {
-        // const li = document.createElement('li');
-        // li.classList.add('dropdown-item');
-        // li.textContent = item;
-        // itemsList.appendChild(li);
-
-        addItemToList(item, itemsList);
-
-    });
+    filterSet.forEach(item => addItemToList(item, itemsList));
 }
 
-function setupDropdownToggle(dropdown, searchInput) {
+/**
+ * Add event listeners to display dropdown list.
+ * @param {string} dropdownId - The ID of the dropdown.
+ */
+function addListenersOnDropdownsToDisplayDropdownList(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
     const dropdownButton = dropdown.querySelector('.dropdown-button');
-    dropdownButton.addEventListener('click', function() {
-        const dropdownContent = this.nextElementSibling;
-        // dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    const searchInput = dropdown.querySelector('.searchInput');
 
+    dropdownButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         dropdownContent.style.display = 'block';
-
         searchInput.focus();
     });
-    hideDropdownOnBlur(dropdown, searchInput);
+
+    hideDropdownContentOnInputBlur(dropdown);
 }
 
-
-
-function hideDropdownOnBlur(dropdown, searchInput) {
-    //console.log('----Setting up blur effect on : ', dropdown);
-    // console.log("---dropdown:", dropdown);
-    // console.log("---searchInput:", searchInput.value);
-
-    searchInput.addEventListener('blur', function() {
-
-
-        console.log('*****************************');
-        console.log('******* Blur event triggered ******');
-        console.log("**** dropdown:", dropdown);
-        console.log("**** searchInput:", searchInput.value);
-        // console.log(dropdown);
-        setTimeout(() => {
-            dropdown.querySelector('.dropdown-content').style.display = 'none';
-        }, 200); // delay to allow click event on dropdown items
+/**
+ * Hide dropdown content when input loses focus.
+ * @param {HTMLElement} dropdown - The dropdown element.
+ */
+function hideDropdownContentOnInputBlur(dropdown) {
+    const searchInput = dropdown.querySelector('.searchInput');
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => hideDropdownContent(dropdown), 200);
     });
 }
 
-
-
-function setupSearchFilter(searchInput, itemsList) {
-    searchInput.addEventListener('input', function() {
+/**
+ * Add event listeners to filter dropdown items based on input.
+ * @param {HTMLElement} searchInput - The search input element.
+ * @param {HTMLElement} itemsList - The list of items to filter.
+ */
+function addListenersOnInputAndDisplayItemsThatMatchInput(searchInput, itemsList) {
+    searchInput.addEventListener('input', () => {
         const filter = searchInput.value.toLowerCase();
-        const items = itemsList.getElementsByClassName('dropdown-item');
-        Array.from(items).forEach(item => {
-            const itemText = item.textContent || item.innerText;
-            item.style.display = itemText.toLowerCase().includes(filter) ? '' : 'none';
+        Array.from(itemsList.getElementsByClassName('dropdown-item')).forEach(item => {
+            item.style.display = item.textContent.toLowerCase().includes(filter) ? '' : 'none';
         });
     });
 }
 
-
-// function setupDropdownItemSelection(itemsList, dropdown) {
-//     // console.log('Setting up item selection');
-//     // console.log("itemsList:", itemsList);
-//     // console.log("dropdown:", dropdown);
-
-//     itemsList.addEventListener('click', function(e) {
-//         console.log("e.target:", e.target);
-//         if (e.target && e.target.matches('.dropdown-item')) {
-//             const selectedItem = e.target.textContent;
-
-//             const selectedTagsDiv = dropdown.querySelector('.filter-selected');
-//             const existingItems = new Set(Array.from(selectedTagsDiv.querySelectorAll('span'))
-//                 .map(span => span.textContent));
-
-//             if (!existingItems.has(selectedItem)) {
-//                 const newTagWrapper = document.createElement('span');
-//                 newTagWrapper.textContent = selectedItem;
-
-//                 selectedTagsDiv.appendChild(newTagWrapper);
-//                 selectedTagsDiv.style.display = 'flex';
-//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
-//             } else {
-//                 //console.log("Item already selected:", selectedItem);
-//             }
-//         }
-//     });
-// }
-
-
-
-// function setupDropdownItemSelection(itemsList, dropdown) {
-//     let items = Array.from(itemsList.children);
-//     itemsList.addEventListener('click', function(e) {
-//         if (e.target && e.target.matches('.dropdown-item')) {
-//             const selectedItem = e.target.textContent.trim();
-//             const selectedIndex = items.indexOf(e.target);
-
-//             const selectedTagsDiv = dropdown.querySelector('.filter-selected');
-//             const existingItems = new Set(Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
-//                 .map(span => span.textContent.trim()));
-
-//             if (!existingItems.has(selectedItem)) {
-//                 const newTagWrapper = createTag(selectedItem, selectedIndex, itemsList, dropdown);
-
-//                 selectedTagsDiv.appendChild(newTagWrapper);
-//                 selectedTagsDiv.style.display = 'flex';
-//                 dropdown.querySelector('.dropdown-content').style.display = 'none';
-//             } else {
-//                 console.log("Item already selected:", selectedItem);
-//             }
-//         }
-//     });
-// }
-
-
-
-
-// function createTag(item, index, dropdown) {
-
-//     console.log("createTag : ", item, index);
-
-//     const newTagWrapper = document.createElement('div');
-//     newTagWrapper.classList.add('tag-wrapper');
-//     const newTagContent = document.createElement('span');
-//     newTagContent.textContent = item;
-//     newTagContent.classList.add('tag-content');
-
-//     const closeButton = document.createElement('span');
-//     closeButton.textContent = '✕';
-//     closeButton.classList.add('remove-tag');
-//     closeButton.addEventListener('click', function() {
-//         // Remove the tag wrapper from the selectedTagsDiv
-//         newTagWrapper.remove();
-
-//         console.log("dropdown :", dropdown);
-//         console.log("dropdown.children :", dropdown.children);
-//         console.log("itemsList :", itemsList);
-//         console.log("itemsList.children :", itemsList.children);
-//         console.log("index :", index);
-//         const itemToRemove = itemsList.querySelector(`.dropdown-item:nth-child(${index + 1})`);
-
-//         console.log("itemToRemove :", itemToRemove);
-
-//         if (itemToRemove) {
-//             itemsList.removeChild(itemToRemove);
-//         }
-//     });
-
-//     newTagWrapper.appendChild(newTagContent);
-//     newTagWrapper.appendChild(closeButton);
-
-//     return newTagWrapper;
-// }
-
-
-function setupDropdownItemSelection(itemsList, dropdown, recipes) {
-    // const items = Array.from(itemsList.children)
-    // .map(item => item.textContent.trim());
-    ;
-
+/**
+ * Add event listeners to handle item selection in dropdowns.
+ * @param {HTMLElement} itemsList - The list of items.
+ * @param {HTMLElement} dropdown - The dropdown element.
+ * @param {Array} recipes - The array of recipes.
+ */
+function addListenersOnDropdownItemsAndLaunchHandling(itemsList, dropdown, recipes) {
     itemsList.addEventListener('click', (e) => {
-
-        // console.log("setupDropdownItemSelection : e.target ", e.target)
-        // console.log(`setupDropdownItemSelection : e.target.matches('.dropdown-item') ${e.target.matches('.dropdown-item')}`);
-
-        // console.log("setupDropdownItemSelection : ", e.target, e.target.matches('.dropdown-item'));
-
         if (e.target && e.target.matches('.dropdown-item')) {
-            handleItemClick(e.target, itemsList, dropdown, recipes);
+            handleSelectedDropdownItem(e.target, itemsList, dropdown, recipes);
         }
-        
     });
-
 }
 
-
-
-function handleItemClick(target, itemsList, dropdown, recipes) {
+/**
+ * Handle the click event on a dropdown item.
+ * @param {HTMLElement} target - The clicked item.
+ * @param {HTMLElement} itemsList - The list of items.
+ * @param {HTMLElement} dropdown - The dropdown element.
+ * @param {Array} recipes - The array of recipes.
+ */
+function handleSelectedDropdownItem(target, itemsList, dropdown, recipes) {
     const selectedItem = target.textContent.trim();
     const selectedTagsDiv = dropdown.querySelector('.filter-selected');
     const existingTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
                                 .map(span => span.textContent.trim());
 
-    console.log("existingTags in this category:", existingTags);
-
     if (!existingTags.includes(selectedItem)) {
-        addTag(selectedItem, selectedTagsDiv, itemsList, recipes);
+        createAndAddTagToTagsArea(selectedItem, selectedTagsDiv, itemsList, recipes);
         hideDropdownContent(dropdown);
-
-        const allExistingTags = getAllExistingTags();
-        console.log("allExistingTags:", allExistingTags);
-
-        console.log("BEFORE CALL filterRecipesByTags");
-        console.log("------ allExistingTags:", allExistingTags);
-
-        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
-
-        console.log("filteredRecipes:", filteredRecipes);
-
-        updateUI(filteredRecipes);
-    } else {
-        console.log("Item was already selected:", selectedItem);
+        regeneratePageKeepingTagsUntouched();
     }
 }
 
-function addTag(selectedItem, selectedTagsDiv, itemsList, recipes) {
-    const newTagWrapper = createTag(selectedItem, itemsList, recipes);
+/**
+ * Add a tag to the selected tags area.
+ * @param {string} selectedItem - The item to add as a tag.
+ * @param {HTMLElement} selectedTagsDiv - The div to add the tag to.
+ * @param {HTMLElement} itemsList - The list of items.
+ * @param {Array} recipes - The array of recipes.
+ */
+function createAndAddTagToTagsArea(selectedItem, selectedTagsDiv, itemsList) {
+    const newTagWrapper = createTagElement(selectedItem, itemsList);
     selectedTagsDiv.appendChild(newTagWrapper);
     selectedTagsDiv.style.display = 'flex';
 }
 
+/**
+ * Hide the dropdown content.
+ * @param {HTMLElement} dropdown - The dropdown element.
+ */
 function hideDropdownContent(dropdown) {
     dropdown.querySelector('.dropdown-content').style.display = 'none';
 }
 
+/**
+ * Get all existing tags from all dropdowns.
+ * @returns {Object} An object with tag categories as keys and arrays of tags as values.
+ */
 function getAllExistingTags() {
     const allDropdowns = document.querySelectorAll('.dropdown');
     let allTags = {};
 
     allDropdowns.forEach(dropdown => {
-        const tagsCategory = getTagsCategory(dropdown);
+        const tagsCategory = extractTagCategoryFromDropdownId(dropdown);
         const selectedTagsDiv = dropdown.querySelector('.filter-selected');
         const existingTags = Array.from(selectedTagsDiv.querySelectorAll('.tag-content'))
                                     .map(span => span.textContent.trim());
@@ -351,19 +268,39 @@ function getAllExistingTags() {
     return allTags;
 }
 
-function getTagsCategory(dropdown) {
+/**
+ * Get the category of tags for a dropdown.
+ * @param {HTMLElement} dropdown - The dropdown element.
+ * @returns {string} The category of the tags.
+ */
+function extractTagCategoryFromDropdownId(dropdown) {
     return dropdown.id.split('-')[0];
 }
 
-function updateUI(filteredRecipes) {
-    renderRecipesGrid(filteredRecipes);
-    initializeFilters(filteredRecipes);
+/**
+ * Regenerate the page content while keeping selected tags.
+ */
+function regeneratePageKeepingTagsUntouched() {
+    const existingTags = getAllExistingTags();
+    const hasTags = Object.keys(existingTags).length > 0;
+    
+    const recipesToRender = hasTags 
+        ? filterRecipesByTags(recipesFilteredByName, existingTags)
+        : recipesFilteredByName;
+
+    hideNoRecipesFoundMessage();
+    renderRecipesGrid(recipesToRender);
+    initializeFilters(recipesToRender);
 }
 
-
-
-
-function createTag(item, itemsList, recipes) {
+/**
+ * Create a new tag element.
+ * @param {string} item - The item to create a tag for.
+ * @param {HTMLElement} itemsList - The list of items.
+ * @param {Array} recipes - The array of recipes.
+ * @returns {HTMLElement} The created tag wrapper element.
+ */
+function createTagElement(item, itemsList) {
     const newTagWrapper = document.createElement('div');
     newTagWrapper.classList.add('tag-wrapper');
 
@@ -371,16 +308,21 @@ function createTag(item, itemsList, recipes) {
     newTagContent.textContent = item;
     newTagContent.classList.add('tag-content');
 
-    const closeButton = createCloseButton(newTagWrapper, itemsList, recipes);
+    const closeButton = createCloseButtonAndHandleTagRemoval(newTagWrapper, itemsList);
 
     newTagWrapper.appendChild(newTagContent);
     newTagWrapper.appendChild(closeButton);
-    removeItemFromList(item, itemsList)
 
     return newTagWrapper;
 }
 
-function createCloseButton(tagWrapper, itemsList, recipes) {
+/**
+ * Create a close button for a tag and handle its removal.
+ * @param {HTMLElement} tagWrapper - The tag wrapper element.
+ * @param {HTMLElement} itemsList - The list of items.
+ * @returns {HTMLElement} The created close button element.
+ */
+function createCloseButtonAndHandleTagRemoval(tagWrapper, itemsList) {
     const closeButton = document.createElement('span');
     closeButton.textContent = '✕';
     closeButton.classList.add('remove-tag');
@@ -389,37 +331,9 @@ function createCloseButton(tagWrapper, itemsList, recipes) {
         const itemToAdd = tagWrapper.querySelector('.tag-content').textContent.trim();
         tagWrapper.remove();
         addItemToList(itemToAdd, itemsList);
-
-        const allExistingTags = getAllExistingTags();
-        const filteredRecipes = filterRecipesByTags(recipes, allExistingTags);
-        updateUI(filteredRecipes);
+        regeneratePageKeepingTagsUntouched();
     });
 
     return closeButton;
 }
-
-function removeItemFromList(itemToRemove, itemsList) {
-    const listItemToRemove = Array.from(itemsList.children).find(child => 
-        child.textContent.trim() === itemToRemove
-    );
-
-    // console.log("itemsList:", itemsList);
-    // console.log("itemsList.children:", itemsList.children);
-    // console.log("itemToRemove:", itemToRemove);
-    // console.log("listItemToRemove:", listItemToRemove);
-
-    if (listItemToRemove) {
-        itemsList.removeChild(listItemToRemove);
-    }
-}
-
-
-
-function addItemToList(itemToAdd, itemsList) {
-    const li = document.createElement('li');
-    li.classList.add('dropdown-item');
-    li.textContent = itemToAdd;
-    itemsList.appendChild(li);
-}
-
 
